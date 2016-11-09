@@ -1,10 +1,11 @@
 ---
 layout: page-fullwidth
 show_meta: false
-title: "Microbenchmarks to test Intel MPX"
+title: "Usability Evaluation"
 subheadline:
+teaser:
 header: no
-permalink: "/mpx-microbenchmarks/"
+permalink: "/usability/"
 ---
 
 Under construction

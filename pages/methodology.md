@@ -1,10 +1,11 @@
 ---
 layout: page-fullwidth
 show_meta: false
-title: "Architecture of Intel MPX"
+title: "Evaluation methodology"
 subheadline:
+teaser:
 header: no
-permalink: "/mpx-architecture/"
+permalink: "/methodology/"
 ---
 
 Under construction

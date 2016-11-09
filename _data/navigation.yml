@@ -1,52 +1,25 @@
-- title: "Start"
+- title: "Home"
   url: "/"
   side: left
 
-- title: "Background"
-  url: "/background/"
+- title: "Methodology"
+  url: "/methodology/"
   side: left
 
-- title: "Intel MPX"
-  url: "/mpx/"
-  side: left
-  dropdown:
-  - title: "Architecture of Intel MPX"
-    url: "/mpx-architecture/"
-  - title: "Instruction latencies"
-    url: "/mpx-instructions/"
-  - title: "Microbenchmarks"
-    url: "/mpx-microbenchmarks/"
-
-- title: "Testbed"
-  url: "/testbed/"
+- title: "Performance"
+  url: "/performance/"
   side: left
 
-- title: "Benchmark suites"
-  url: "/benchmarks/"
+- title: "Security"
+  url: "/security/"
   side: left
-  dropdown:
-  - title: "Performance overheads"
-    url: "/benchmarks-performance/"
-  - title: "Memory overheads"
-    url: "/benchmarks-memory/"
-  - title: "Security evaluation"
-    url: "/benchmarks-security/"
-  - title: "Usability evaluation"
-    url: "/benchmarks-usability/"
+
+- title: "Usability"
+  url: "/usability/"
+  side: left
 
 - title: "Case studies"
   url: "/case-studies/"
-  side: left
-  dropdown:
-  - title: "Memcached"
-    url: "/case-studies-memcached/"
-  - title: "Nginx"
-    url: "/case-studies-nginx/"
-  - title: "Apache"
-    url: "/case-studies-apache/"
-
-- title: "RIPE evaluation"
-  url: "/security-ripe/"
   side: left
 
 - title: "Contact"

@@ -1,10 +1,11 @@
 ---
 layout: page-fullwidth
 show_meta: false
-title: "Instruction latencies of Intel MPX"
+title: "Security Evaluation"
 subheadline:
+teaser:
 header: no
-permalink: "/mpx-instructions/"
+permalink: "/security/"
 ---
 
 Under construction
