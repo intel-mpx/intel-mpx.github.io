@@ -1,0 +1,11 @@
+- menu_name: "Thanks to"
+
+- name: "Dmitrii Kuvaiskii"
+  url: "https://github.com/dimakuv"
+  class: "network-entypo"
+  title: "Dmitrii Kuvaiskii"
+
+- name: "Oleksii Oleksenko"
+  url: "https://github.com/OleksiiOleksenko"
+  class: "services-newsletter"
+  title: "Oleksii Oleksenko"
