@@ -5,7 +5,7 @@ title: "Performance Evaluation"
 subheadline:
 teaser:
 header: no
-permalink: "/benchmarks/"
+permalink: "/performance/"
 ---
 
 This includes all performance numbers and memory numbers
