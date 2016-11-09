@@ -1,10 +1,10 @@
 ---
 layout: page
 show_meta: false
-title: "Case Studies: Memcached Caching Server"
+title: "Memcached Caching Server"
 subheadline:
 teaser: "Evaluation of Memcached caching server."
-header:
+header: no
 permalink: "/case-studies-memcached/"
 ---
 

@@ -4,7 +4,7 @@ show_meta: false
 title: "Benchmark Suites: Performance Evaluation"
 subheadline:
 teaser: "Performance evaluation of Intel MPX on Phoenix, PARSEC, and SPEC2006 benchmark suites."
-header:
+header: no
 permalink: "/benchmarks-performance/"
 ---
 

@@ -1,10 +1,10 @@
 ---
 layout: page
 show_meta: false
-title: "Case Studies: Apache Web Server"
+title: "Apache Web Server"
 subheadline:
 teaser: "Evaluation of Apache web server."
-header:
+header: no
 permalink: "/case-studies-apache/"
 ---
 

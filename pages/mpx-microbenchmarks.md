@@ -3,7 +3,7 @@ layout: page
 show_meta: false
 title: "Microbenchmarks to test Intel MPX"
 subheadline:
-header:
+header: no
 permalink: "/mpx-microbenchmarks/"
 ---
 

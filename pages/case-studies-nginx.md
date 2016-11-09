@@ -1,10 +1,10 @@
 ---
 layout: page
 show_meta: false
-title: "Case Studies: Nginx Web Server"
+title: "Nginx Web Server"
 subheadline:
 teaser: "Evaluation of Nginx web server."
-header:
+header: no
 permalink: "/case-studies-nginx/"
 ---
 

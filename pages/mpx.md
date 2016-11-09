@@ -4,7 +4,7 @@ show_meta: false
 title: "Intel MPX"
 subheadline:
 teaser: "Overview of Intel MPX."
-header:
+header: no
 permalink: "/mpx/"
 ---
 

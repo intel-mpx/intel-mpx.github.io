@@ -3,7 +3,7 @@ layout: page
 show_meta: false
 title: "Architecture of Intel MPX"
 subheadline:
-header:
+header: no
 permalink: "/mpx-architecture/"
 ---
 

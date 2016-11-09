@@ -4,7 +4,7 @@ show_meta: false
 title: "Evaluation testbed"
 subheadline:
 teaser:
-header:
+header: no
 permalink: "/testbed/"
 ---
 

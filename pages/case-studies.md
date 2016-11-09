@@ -4,7 +4,7 @@ show_meta: false
 title: "Case Studies"
 subheadline:
 teaser: "Evaluation of Intel MPX on case studies: Memcached, Nginx, and Apache."
-header:
+header: no
 permalink: "/case-studies/"
 ---
 
