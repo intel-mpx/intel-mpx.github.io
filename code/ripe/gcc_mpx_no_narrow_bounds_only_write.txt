@@ -1,0 +1,18 @@
+NOTE: BNDPRESERVE=1 and GCC has flag -fchkp-first-field-has-own-bounds.
+
+TOTAL OK: 14
+
+ripe -t direct -i createfile -c structfuncptrheap  -l heap -f memcpy
+ripe -t direct -i createfile -c structfuncptrheap  -l heap -f homebrew
+ripe -t direct -i createfile -c structfuncptrbss  -l bss -f memcpy
+ripe -t direct -i createfile -c structfuncptrbss  -l bss -f homebrew
+ripe -t direct -i createfile -c structfuncptrdata  -l data -f memcpy
+ripe -t direct -i createfile -c structfuncptrdata  -l data -f homebrew
+ripe -t direct -i returnintolibc -c structfuncptrstack  -l stack -f memcpy
+ripe -t direct -i returnintolibc -c structfuncptrstack  -l stack -f homebrew
+ripe -t direct -i returnintolibc -c structfuncptrheap  -l heap -f memcpy
+ripe -t direct -i returnintolibc -c structfuncptrheap  -l heap -f homebrew
+ripe -t direct -i returnintolibc -c structfuncptrbss  -l bss -f memcpy
+ripe -t direct -i returnintolibc -c structfuncptrbss  -l bss -f homebrew
+ripe -t direct -i returnintolibc -c structfuncptrdata  -l data -f memcpy
+ripe -t direct -i returnintolibc -c structfuncptrdata  -l data -f homebrew

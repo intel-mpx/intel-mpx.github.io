@@ -1,0 +1,3 @@
+NOTE: BNDPRESERVE=1 and GCC has flag -fchkp-first-field-has-own-bounds.
+
+TOTAL OK: 0

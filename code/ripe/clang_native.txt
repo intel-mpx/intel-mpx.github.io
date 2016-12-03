@@ -1,0 +1,40 @@
+TOTAL OK: 38
+
+ripe -t direct -i createfile -c funcptrheap  -l heap -f memcpy
+ripe -t direct -i createfile -c funcptrheap  -l heap -f homebrew
+ripe -t direct -i createfile -c structfuncptrheap  -l heap -f memcpy
+ripe -t direct -i createfile -c structfuncptrheap  -l heap -f homebrew
+ripe -t direct -i createfile -c structfuncptrbss  -l bss -f memcpy
+ripe -t direct -i createfile -c structfuncptrbss  -l bss -f homebrew
+ripe -t direct -i createfile -c funcptrdata  -l data -f memcpy
+ripe -t direct -i createfile -c funcptrdata  -l data -f homebrew
+<...missing line...>
+ripe -t direct -i createfile -c structfuncptrdata  -l data -f homebrew
+ripe -t indirect -i createfile -c ret  -l heap -f memcpy
+ripe -t indirect -i createfile -c ret  -l heap -f homebrew
+ripe -t indirect -i createfile -c funcptrstackvar  -l heap -f memcpy
+ripe -t indirect -i createfile -c funcptrstackvar  -l heap -f homebrew
+ripe -t indirect -i createfile -c funcptrstackparam  -l heap -f memcpy
+ripe -t indirect -i createfile -c funcptrstackparam  -l heap -f homebrew
+ripe -t indirect -i createfile -c funcptrheap  -l heap -f memcpy
+ripe -t indirect -i createfile -c funcptrheap  -l heap -f homebrew
+ripe -t indirect -i createfile -c funcptrbss  -l heap -f memcpy
+ripe -t indirect -i createfile -c funcptrbss  -l heap -f homebrew
+ripe -t indirect -i createfile -c funcptrdata  -l heap -f memcpy
+ripe -t indirect -i createfile -c funcptrdata  -l heap -f homebrew
+ripe -t direct -i returnintolibc -c funcptrstackvar  -l stack -f memcpy
+ripe -t direct -i returnintolibc -c funcptrstackvar  -l stack -f homebrew
+ripe -t direct -i returnintolibc -c funcptrstackparam  -l stack -f memcpy
+ripe -t direct -i returnintolibc -c funcptrstackparam  -l stack -f homebrew
+ripe -t direct -i returnintolibc -c structfuncptrstack  -l stack -f memcpy
+ripe -t direct -i returnintolibc -c structfuncptrstack  -l stack -f homebrew
+ripe -t direct -i returnintolibc -c funcptrheap  -l heap -f memcpy
+ripe -t direct -i returnintolibc -c funcptrheap  -l heap -f homebrew
+ripe -t direct -i returnintolibc -c structfuncptrheap  -l heap -f memcpy
+ripe -t direct -i returnintolibc -c structfuncptrheap  -l heap -f homebrew
+ripe -t direct -i returnintolibc -c structfuncptrbss  -l bss -f memcpy
+ripe -t direct -i returnintolibc -c structfuncptrbss  -l bss -f homebrew
+<...missing...> -t direct -i returnintolibc -c funcptrdata  -l data -f memcpy
+ripe -t direct -i returnintolibc -c funcptrdata  -l data -f homebrew
+ripe -t direct -i returnintolibc -c structfuncptrdata  -l data -f memcpy
+ripe -t direct -i returnintolibc -c structfuncptrdata  -l data -f homebrew
