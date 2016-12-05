@@ -61,7 +61,7 @@ Additional statistics[^stats]:
 | L1 cache misses (%)    | 12     | 14   | 12   |
 | LLC cache misses (%)   | 1.2    | **_8_**| 1.6  |
 |=====
-| (throughput is a bottleneck in all cases)
+| (network is a bottleneck in all cases)
 
 **Performance Summary**: GCC-MPX, ICC-MPX, and AddressSanitizer all show minimal overheads, achieving 95.3%, 95.7%, and 97.5% of native throughput. Overhead in latency did not exceed 5%. Such good performance is explained by the fact that our experiment was limited by the network and not CPU or memory.
 
@@ -120,7 +120,7 @@ Additional statistics[^stats]:
 | L1 cache misses (%)    | 9      | 10   | 10   |
 | LLC cache misses (%)   | 0.7    | 0.7  | **_9_**  |
 |=====
-| (throughput is a bottleneck in all cases)
+| (network is a bottleneck in all cases)
 
 **Performance Summary**: AddressSanitizer reaches 95% of native throughput, while GCC-MPX and ICC-MPX lag behind with 86% and 89.5% respectively. Similar to Apache, this experiment was network-bound, with CPU usage of 225% for native, 265% for MPX, and 300% for AddressSanitizer. (CPU usage numbers prove that HW-assisted approaches impose less CPU overheads.)
 
@@ -184,7 +184,7 @@ Additional statistics[^stats]:
 | L1 cache misses (%)    | 11     | 13   | 11   |
 | LLC cache misses (%)   | 6      | **_13_**  | 6    |
 |=====
-| (throughput is a bottleneck only for native and ASan)
+| (network is a bottleneck only for native and ASan)
 
 **Performance Summary**: AddressSanitizer performs on par with the native version. Both GCC-MPX and ICC-MPX achieved only 48−50% of maximum native throughput. In case of native and AddressSanitizer, performance of Memcached was limited by network. But it was not the case for MPX: Memcached exercised only 70% of the network bandwidth.
 

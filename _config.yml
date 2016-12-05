@@ -26,7 +26,7 @@ author: TUD
 # This URL is the main address for absolute links. Don't include a slash at the end.
 #
 #url: 'https://intel-mpx.github.io'
-url: 'http://0.0.0.0:4000'
+url: 'https://intel-mpx.github.io'
 baseurl: ''
 
 # This is for the editing function in _/includes/improve_content
@@ -41,7 +41,7 @@ improve_content:
 # Markdown-Example for posts ![Image Text]({{ site.urlimg }}image.jpg)
 #
 #urlimg: 'https://intel-mpx.github.io/images/'
-urlimg: 'http://0.0.0.0:4000/images/'
+urlimg: 'https://intel-mpx.github.io/images/'
 
 # Logo size is 600x80 pixels
 logo:
