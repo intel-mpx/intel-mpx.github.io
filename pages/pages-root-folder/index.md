@@ -28,7 +28,9 @@ permalink: /index.html
 homepage: true
 ---
 
-Under construction
+### WORK IN PROGRESS
+
+{% include alert text='This web-site is still work in progress. Please refrain from mentioning this web-site.' %}
 
 <div id="videoModal" class="reveal-modal large" data-reveal="">
   <div class="flex-video widescreen vimeo" style="display: block;">
