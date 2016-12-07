@@ -6,6 +6,10 @@
   url: "/methodology/"
   side: left
 
+- title: "Microbenchmarks"
+  url: "/microbenchmarks/"
+  side: left
+
 - title: "Performance"
   url: "/performance/"
   side: left

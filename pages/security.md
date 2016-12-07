@@ -88,6 +88,7 @@ Below are the logs which show which attacks worked under each approach.
 * [SoftBound]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_softbound.txt)
 * [SafeCode]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_safecode.txt)
 
+{% include alert text='Raw results can be found in the [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/dev/raw_results/ripe).' %}
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
