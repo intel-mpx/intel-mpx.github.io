@@ -22,27 +22,23 @@ permalink: "/case-studies/"
 
 <div class="medium-8 medium-pull-4 columns" markdown="1">
 
-**Testbed**: two machines, one as client and one as server.
-Each machine has the following characteristics:
-
-* Intel(R) Xeon(R) CPU E3-1230 v5 @ 3.40GHz
-
-* 1 socket, 8 hyper-threads, 4 physical cores
-
-* CPU caches: L1d = 32KB, L1i = 32KB, L2 = 256KB, shared L3 = 8MB
-
-Bandwidth between the machines is 938 Mbits/sec as measured by iperf.
-
+**Testbed**: two identical machines, one as client and one as server.
+The characteristics of machines and the network can be found in the [Methodology page]({{ site.url }}{{ site.baseurl }}/methodology).
 
 ## Apache web server  {#apache}
 
-**Version**: 2.4.18
-
-**Configuration**: default (MPM event model: hybrid multi-process multi-threaded)
-
-**Dependencies[^deps]**: OpenSSL 1.0.1f (susceptible to the Heartbleed bug), apr-1.5.2, apr-util-1.5.4, PCRE 8.38
-
-**Workload**: ab benchmark with keepalive connections, fetching of a 2.3K static web-page via HTTP get
+* **Version**: 2.4.18
+* **Configuration**: default (MPM event model: hybrid multi-process multi-threaded)
+* **Dependencies[^deps]**:
+  * OpenSSL 1.0.1f (susceptible to the Heartbleed bug)
+  * apr-1.5.2
+  * apr-util-1.5.4
+  * PCRE 8.38
+* **Workload**:
+  * ab benchmark
+  * with keepalive connections
+  * fetching of a 2.3K static web-page
+  * using HTTP get
 
 ### Performance
 <img class="t20" width="75%" src="{{ site.urlimg }}apache_tput.jpg" alt="Apache throughput-latency plot">
@@ -69,9 +65,8 @@ Additional statistics[^stats]:
 
 ### Security
 
-**Bug**: Heartbleed, [official web-site](http://heartbleed.com/) and [detailed explanation](http://www.theregister.co.uk/2014/04/09/heartbleed_explained/)
-
-**Exploit script**: [by Jared Stafford and Travis Lee](https://github.com/OleksiiOleksenko/mpx_evaluation/blob/dev/experiments/exp_apache_security/heartbleed.py)
+* **Bug**: Heartbleed, [official web-site](http://heartbleed.com/) and [detailed explanation](http://www.theregister.co.uk/2014/04/09/heartbleed_explained/)
+* **Exploit script**: [by Jared Stafford and Travis Lee](https://github.com/OleksiiOleksenko/mpx_evaluation/blob/dev/experiments/exp_apache_security/heartbleed.py)
 
 **Results**:
 
@@ -95,13 +90,14 @@ Additional statistics[^stats]:
 
 ## Nginx web server {#nginx}
 
-**Version**: 1.4.0 (susceptible to [this bug](http://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2013-2028))
-
-**Configuration**: worker_processes = auto (1 process per core)
-
-**Dependencies[^deps]**: OpenSSL 1.0.1f
-
-**Workload**: ab benchmark with keepalive connections, fetching of a 2.3K static web-page via HTTP get
+* **Version**: 1.4.0 (susceptible to [this bug](http://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2013-2028))
+* **Configuration**: worker_processes = auto (1 process per core)
+* **Dependencies[^deps]**: OpenSSL 1.0.1f
+* **Workload**:
+  * ab benchmark
+  * with keepalive connections
+  * fetching of a 2.3K static web-page
+  * using HTTP get
 
 ### Performance
 <img class="t20" width="75%" src="{{ site.urlimg }}nginx_tput.jpg" alt="Nginx throughput-latency plot">
@@ -131,9 +127,8 @@ Additional statistics[^stats]:
 
 ### Security
 
-**Bug**: Stack buffer overflow, [CVE-2013-2028](http://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2013-2028) and [detailed explanation](http://www.vnsecurity.net/research/2013/05/21/analysis-of-nginx-cve-2013-2028.html)
-
-**Exploit script**: [This Ruby script](https://github.com/OleksiiOleksenko/mpx_evaluation/blob/dev/experiments/exp_nginx_security/CVE-2013-2028.rb)
+* **Bug**: Stack buffer overflow, [CVE-2013-2028](http://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2013-2028) and [detailed explanation](http://www.vnsecurity.net/research/2013/05/21/analysis-of-nginx-cve-2013-2028.html)
+* **Exploit script**: [This Ruby script](https://github.com/OleksiiOleksenko/mpx_evaluation/blob/dev/experiments/exp_nginx_security/CVE-2013-2028.rb)
 
 {% include alert text='**Note**. To exploit the bug, one needs to `apt-get install gem rubygems ruby-dev sqlite3 libsqlite3-dev` and `gem install ronin` in Ubuntu.' %}
 
@@ -159,13 +154,12 @@ Additional statistics[^stats]:
 
 ## Memcached caching system {#memcached}
 
-**Version**: 1.4.15 (susceptible to [this bug](http://www.cvedetails.com/cve/cve-2011-4971))
-
-**Configuration**: 8 threads (to keep all CPU cores busy)
-
-**Dependencies[^deps]**: libevent 2.0.22-stable
-
-**Workload**: memaslap benchmark from libmemcached 1.0.16 with 10% ~400B sets and 90% ~1,700B gets
+* **Version**: 1.4.15 (susceptible to [this bug](http://www.cvedetails.com/cve/cve-2011-4971))
+* **Configuration**: 8 threads (to keep all CPU cores busy)
+* **Dependencies[^deps]**: libevent 2.0.22-stable
+* **Workload**:
+  * memaslap benchmark from libmemcached 1.0.16
+  * with 10% ~400B sets and 90% ~1,700B gets
 
 ### Performance
 <img class="t20" width="75%" src="{{ site.urlimg }}memcached_tput.jpg" alt="Memcached throughput-latency plot">
@@ -193,9 +187,8 @@ Additional statistics[^stats]:
 
 ### Security
 
-**Bug**: Buffer overflow due to signedness error, [CVE-2011-4971](http://www.cvedetails.com/cve/cve-2011-4971) and [detailed explanation](https://code.google.com/archive/p/memcached/issues/192)
-
-**Exploit script**: [Specially crafted TCP/IP packet](https://code.google.com/archive/p/memcached/issues/192)
+* **Bug**: Buffer overflow due to signedness error, [CVE-2011-4971](http://www.cvedetails.com/cve/cve-2011-4971) and [detailed explanation](https://code.google.com/archive/p/memcached/issues/192)
+* **Exploit script**: [Specially crafted TCP/IP packet](https://code.google.com/archive/p/memcached/issues/192)
 
 **Results**:
 

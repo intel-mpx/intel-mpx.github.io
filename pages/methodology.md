@@ -33,6 +33,11 @@ All the experiments were performed on the following setup:
 * CPU caches: L1d = 32KB, L1i = 32KB, L2 = 256KB, shared L3 = 8MB
 * 64 GB of memory
 
+#### Network
+
+For experiments on case studies (Apache, Nginx, Memcached), we used two machines with the network bandwidth between them equal to **938 Mbits/sec** as measured by iperf.
+
+
 #### Software infrastructure
 
 * Kernel: 4.4.0
@@ -57,7 +62,7 @@ All the experiments were performed on the following setup:
     * Version: 3.2.0
     * Configuration flags: `-G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"`
     * [Source](http://safecode.cs.illinois.edu/downloads.html)
- 
+
 ## Measurement tools
 
 We've used the following tools for measurements:

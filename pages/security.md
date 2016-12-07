@@ -29,13 +29,9 @@ We evaluated all approaches against the RIPE security testbed.[^ripe] RIPE is a 
 To evaluate security of approaches, we disabled all other security features:
 
 * Linux ASLR was disabled via `sudo bash -c 'echo 0 > /proc/sys/kernel/randomize_va_space'`
-
 * All compiler optimizations were disabled via `-O0`
-
 * Compiler-inserted stack canaries were disabled via `-fno-stack-protector`
-
 * Compiler-enforced fortify-source was disabled via `-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0`
-
 * Executable stack was enabled via compiler flag `-Wl,-z,execstack`
 
 Even under these relaxed security flags all compilers were susceptible only to a small number of attacks. Under native GCC, only *64* attacks survived, under ICC -- *34*, and under Clang -- *38*.
@@ -70,41 +66,23 @@ We performed the same experiment with *only-writes* versions of these approaches
 Below are the logs which show which attacks worked under each approach.
 
 * Native versions:
-
   * [GCC]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_native.txt)
-
   * [ICC]({{ site.url }}{{ site.baseurl }}/code/ripe/icc_native.txt)
-
   * [Clang]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_native.txt)
-
 * MPX versions:
-
   * [GCC default]({{ site.url }}{{ site.baseurl }}/code/ripe/badgcc_mpx.txt)
-
   * [GCC]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_mpx.txt)
-
   * [GCC only-writes]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_mpx_only_write.txt)
-
   * [GCC no narrow bounds]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_mpx_no_narrow_bounds.txt)
-
   * [GCC no narrow bounds only-writes]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_mpx_no_narrow_bounds_only_write.txt)
-
   * [ICC]({{ site.url }}{{ site.baseurl }}/code/ripe/icc_mpx.txt)
-
   * [ICC only-writes]({{ site.url }}{{ site.baseurl }}/code/ripe/icc_mpx_only_write.txt)
-
   * [ICC no narrow bounds]({{ site.url }}{{ site.baseurl }}/code/ripe/icc_mpx_no_narrow_bounds.txt)
-
   * [ICC no narrow bounds only-writes]({{ site.url }}{{ site.baseurl }}/code/ripe/icc_mpx_no_narrow_bounds_only_write.txt)
-
 * AddressSanitizer versions:
-
   * [full]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_asan.txt)
-
   * [only-writes]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_asan_only_write.txt)
-
 * [SoftBound]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_softbound.txt)
-
 * [SafeCode]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_safecode.txt)
 
 
