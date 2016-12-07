@@ -87,6 +87,7 @@ Additional statistics[^stats]:
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
 
+---
 
 ## Nginx web server {#nginx}
 
@@ -151,6 +152,7 @@ Additional statistics[^stats]:
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
 
+---
 
 ## Memcached caching system {#memcached}
 

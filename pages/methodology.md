@@ -63,6 +63,11 @@ For experiments on case studies (Apache, Nginx, Memcached), we used two machines
     * Configuration flags: `-G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"`
     * [Source](http://safecode.cs.illinois.edu/downloads.html)
 
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+---
+
+
 ## Measurement tools
 
 We've used the following tools for measurements:
@@ -84,16 +89,108 @@ Not to introduce an additional error, we've measured these parameters by parts, 
 * [time](https://linux.die.net/man/1/time). Since `perf` doesn't provide capabilities for measuring physical memory consumption of a process, we had to use `time --verbose` and collect maximum resident set size.
 * [Intel Pin](https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool). To gather MPX instruction statistics, we've used Pin tool, which allows to write custom binary instrumentations. Full code of our instrumentation can be found in the [repository](/404/).
 
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+---
+
 ## Benchmarks
 
 We used three benchmark suits in our evaluation: [Parsec 3.0](http://parsec.cs.princeton.edu/), [Phoenix 2.0](https://github.com/kozyraki/phoenix/tree/master/sample_apps) and [SPEC CPU 2006](https://www.spec.org/cpu2006/).
 During our work, we found and fixed a set of bugs in them (see [Bugs in benchmarks](/bugs/) for details).
 
+All the benchmarks were compiled together with the libraries they depend upon. 
+
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+---
 
 ## Build types
 
-In progress
+#### GCC implementation of MPX
+
+* compiler flags: `-fcheck-pointer-bounds -mmpx`
+* linker flags: `-lmpx -lmpxwrappers`
+* environment variables:
+
+```sh
+CHKP_RT_BNDPRESERVE="0"  # support of legacy code, i.e. libraries
+CHKP_RT_MODE="stop"
+CHKP_RT_VERBOSE="0"
+CHKP_RT_PRINT_SUMMARY="0"
+```
+
+Subtypes:
+
+* disabled bounds narrowing: `-fno-chkp-narrow-bounds`
+* protecting only memory writes, not reads: `-fno-chkp-check-read`
+
+#### ICC implementation of MPX
+
+* compiler flags: `-check-pointers-mpx=rw`
+* linker flags: `-lmpx`
+* environment variables:
+
+```sh
+CHKP_RT_BNDPRESERVE="0"  # support of legacy code, i.e. libraries
+CHKP_RT_MODE="stop"
+CHKP_RT_VERBOSE="0"
+CHKP_RT_PRINT_SUMMARY="0"
+```
+
+Subtypes:
+
+* disabled bounds narrowing: `-no-check-pointers-narrowing`
+* protecting only memory writes, not reads: `-check-pointers-mpx=write` instead of `-check-pointers-mpx=rw`
+
+
+#### AddressSanitizer (both GCC and Clang)
+
+* compiler flags: `-fsanitize=address`
+* environment variables:
+
+```sh
+ASAN_OPTIONS="verbosity=0:\
+detect_leaks=false:\
+print_summary=true:\
+halt_on_error=true:\
+poison_heap=true:\
+alloc_dealloc_mismatch=0:\
+new_delete_type_mismatch=0"
+```
+
+Subtype:
+
+* protecting only memory writes, not reads: `--param asan-instrument-reads=0`
+
+#### SoftBound
+
+* compiler flags: `-fsoftboundcets -flto -fno-vectorize`
+* linker flags: `-lm -lrt` (runtime library is linked automatically)
+
+#### SafeCode
+
+* compiler flags: `-fmemsafety -g -fmemsafety-terminate -stack-protector=1`
+
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+---
 
 ## Experiments
 
-In progress
+All experiments were executed 10 times and the results were averaged.
+In case of Phoenix, each experiment was additionally preceded by a "dry run" - a run that was not recorded and served a sole purpose of putting the working set into cache.
+The goal of this "dry run" was to decrease the variance in the results, since all Phoenix benchmarks are small and "cold" cache might have drastically slowed them down.  
+
+We performed the following types of experiments: 
+* normal: experiments on a single thread (serialized) and with fixed input
+* multithreaded: experiments on 2, 4, and 8 threads
+* variable inputs: experiments with increasing input size. In particular, we were doing 5 runs, each next one having twice bigger input than the previous
+
+The received results were checked to fulfil the following criteria:
+* application compiled successfully 
+* application run successfully (with normal exit code)
+* the output is equal to the output of non-protected application (if it is stable)
+* the coefficient of variation among results is less than 5 %
+
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }

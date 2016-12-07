@@ -60,6 +60,9 @@ Other results are expected. MPX versions without narrowing of bounds overlook 14
 
 We performed the same experiment with *only-writes* versions of these approaches, and the results were exactly the same. This is explained by the fact that RIPE constructs only control-flow hijacking attacks and not information leaks (which could escape only-writes protection).
 
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+---
 
 ### More details
 
