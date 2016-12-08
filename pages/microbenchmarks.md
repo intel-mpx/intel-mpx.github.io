@@ -67,10 +67,15 @@ The first one stores a large set of pointers in such memory locations that each 
 The second one does the same, but additionally frees all the memory right after it has been assigned, thus triggering BT de-allocation.
 
 The characteristics of microbenchmarks:
+
 * working with 3,000 BTs
+
 * average over 10 runs
+
 * compilation flags:
+
   * native version: `-g -O0`
+
   * MPX version: `-mmpx -fcheck-pointer-bounds -lmpx -lmpxwrappers -g -O0`
 
 Note that we disabled all compiler optimizations to showcase the influence of OS alone.
