@@ -98,7 +98,7 @@ Not to introduce an additional error, we've measured these parameters by parts, 
 We used three benchmark suits in our evaluation: [Parsec 3.0](http://parsec.cs.princeton.edu/), [Phoenix 2.0](https://github.com/kozyraki/phoenix/tree/master/sample_apps) and [SPEC CPU 2006](https://www.spec.org/cpu2006/).
 During our work, we found and fixed a set of bugs in them (see [Bugs in benchmarks](/bugs/) for details).
 
-All the benchmarks were compiled together with the libraries they depend upon. 
+All the benchmarks were compiled together with the libraries they depend upon.
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
@@ -179,15 +179,17 @@ Subtype:
 
 All experiments were executed 10 times and the results were averaged.
 In case of Phoenix, each experiment was additionally preceded by a "dry run" - a run that was not recorded and served a sole purpose of putting the working set into cache.
-The goal of this "dry run" was to decrease the variance in the results, since all Phoenix benchmarks are small and "cold" cache might have drastically slowed them down.  
+The goal of this "dry run" was to decrease the variance in the results, since all Phoenix benchmarks are small and "cold" cache might have drastically slowed them down.
 
-We performed the following types of experiments: 
+We performed the following types of experiments:
+
 * normal: experiments on a single thread (serialized) and with fixed input
 * multithreaded: experiments on 2, 4, and 8 threads
 * variable inputs: experiments with increasing input size. In particular, we were doing 5 runs, each next one having twice bigger input than the previous
 
 The received results were checked to fulfil the following criteria:
-* application compiled successfully 
+
+* application compiled successfully
 * application run successfully (with normal exit code)
 * the output is equal to the output of non-protected application (if it is stable)
 * the coefficient of variation among results is less than 5 %

@@ -101,6 +101,7 @@ More statistics collected can be found here: [os_microbenchmark.md]({{ site.url 
 ## Performance microbenchmarks  {#performance}
 
 Below are the four microbenchmarks, each highlighting a separate MPX feature:
+
 * [arraywrite](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/arraywrite): writing to memory (stress `bndcl` and `bndcu`)
 * [arrayread](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/arrayread): reading from memory (stress `bndcl` and `bndcu`)
 * [struct](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/struct): writing in an inner array inside a struct (the bounds-narrowing feature via `bndmk` and `bndmov`)
@@ -137,6 +138,7 @@ The test cases roughly work as follows; see our paper for more details.
 A "pointer bounds" data race happens on the `arr` array of pointers. The background thread fills this array with all pointers to the first or to the second object alternately. Meanwhile, the main thread accesses a whatever object is currently pointed-to by the array items. Note that depending on the value of the constant offset, the original program is either always-correct or always-buggy: if offset is zero, then the main thread always accesses the correct object, otherwise it accesses an incorrect, adjacent object.
 
 The test cases are compiled and run as follows:
+
 * false negative:
   * found in [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/multithreading_fn)
   * compile at `-O1` to have simple non-vectorized asm
