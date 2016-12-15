@@ -26,10 +26,6 @@
   url: "/case-studies/"
   side: left
 
-- title: "Bugs in benchmarks"
-  url: "/bugs/"
-  side: left
-
 - title: "Contact"
   url: "/contact/"
   side: right

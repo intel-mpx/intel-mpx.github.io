@@ -111,7 +111,7 @@ All microbenchmarks were compiled with at least `-O2` optimizations.
 
 Performance results:
 
-<img class="t20" width="75%" src="{{ site.urlimg }}micro_perf.jpg" alt="Performance overheads of microbenchmarks">
+<img class="t20" width="95%" src="{{ site.urlimg }}micro_perf.jpg" alt="Performance overheads of microbenchmarks">
 
 **Observation 1**: `arraywrite` and `arrayread` represent the bare overhead of bounds-checking instructions (all in registers), 50% in this case. `struct` has a higher overhead of 2.1−2.8× due to the more expensive making and moving of bounds to and from the stack. 5× overhead of `ptrcreation` is due to storing of bounds -- the most expensive MPX operation.
 
