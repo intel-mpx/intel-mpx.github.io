@@ -43,10 +43,8 @@ Even under these relaxed security flags all compilers were susceptible only to a
 | MPX (GCC) default*         | **41/64** (all memcpy and intra-object overflows) |
 | MPX (GCC)                  | **0/64** (no working attacks) |
 | MPX (GCC) no narrow bounds | **14/64** (all intra-object overflows)   |
-|----
 | MPX (ICC)                  | **0/34** (no working attacks) |
 | MPX (ICC) no narrow bounds | **14/34** (all intra-object overflows) |
-|----
 | AddressSanitizer           | **12/64** (all intra-object overflows) |
 | SoftBound                  | **14/38** (all intra-object overflows) |
 | SafeCode                   | **14/38** (all intra-object overflows) |
@@ -62,9 +60,8 @@ We performed the same experiment with *only-writes* versions of these approaches
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
----
 
-### More details
+### RIPE Logs
 
 Below are the logs which show which attacks worked under each approach.
 
@@ -89,6 +86,40 @@ Below are the logs which show which attacks worked under each approach.
 * [SafeCode]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_safecode.txt)
 
 {% include alert text='Raw results can be found in the [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/dev/raw_results/ripe).' %}
+
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+
+---
+
+## Bugs in Benchmark Suites  {#others}
+
+During our experiments, we found `6` real out-of-bounds bugs (true positives). Five of these bugs were already known, and one was detected by GCC-MPX and was not previously reported.
+
+The bugs found are:
+
+1. incorrect black-and-white input pictures leading to classic buffer overflow in `ferret` (PARSEC);
+2. wrong preincrement statement leading to classic off-by-one bug in `h264ref` (SPEC);
+3. out-of-bounds write in `perlbench` (SPEC);
+4. benign intra-object buffer overwrite in `x264` (PARSEC);
+5. benign intra-object buffer overread in `h264ref` (SPEC);
+6. intra-object buffer overwrite in `perlbench` (SPEC).
+
+| Approach                                 | Bug 1    | Bug 2    | Bug 3    | Bug 4    | Bug 5    | Bug 6    |
+|:-----------------------------------------|:--------:|:--------:|:--------:|:--------:|:--------:|:--------:|
+| MPX (GCC)                                | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; | &#10004; |
+| MPX (GCC) no narrow bounds               | &#10004; | &#10004; | &#10004; |          |          |          |
+| MPX (GCC) only writes                    | &#10004; | &#10004; | &#10004; | &#10004; |          | &#10004; |
+| MPX (GCC) no narrow bounds + only writes | &#10004; | &#10004; | &#10004; |          |          |          |
+| MPX (ICC)                                | NA       | &#10004; | &#10004; | NA       |          |          |
+| MPX (ICC) no narrow bounds               | &#10004; | NA       | &#10004; | NA       | NA       |          |
+| MPX (ICC) only writes                    | NA       | &#10004; | &#10004; | NA       |          |          |
+| MPX (ICC) no narrow bounds + only writes | &#10004; | &#10004; | &#10004; | NA       |          |          |
+| AddressSanitizer                         | &#10004; | &#10004; | &#10004; |          |          |          |
+| SoftBound                                | NA       |          | NA       | NA       |          | NA       |
+| SafeCode                                 | NA       | &#10004; | &#10004; | NA       |          |          |
+
+A more refined summary table as well as descriptions of the aforementioned bugs can be found in the [Usability page]({{ site.url }}{{ site.baseurl }}/usability).
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
