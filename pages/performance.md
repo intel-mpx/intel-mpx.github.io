@@ -18,9 +18,20 @@ permalink: "/performance/"
 </div>
 </div><!-- /.medium-4.columns -->
 
+<div class="medium-8 medium-pull-4 columns" markdown="1">
+
+To evaluate the runtime parameters of MPX, we have tested three benchmark suits: Phoenix 2.0, PARSEC 3.0 and SPEC CPU2006 (see [methodology](/methodology#benchmarks) for details).
+To put the results into a context, we measured not only the two implementations of MPX, but also SafeCode, SoftBound and AddressSanitizer.
+
+Note, that in both ICC and GCC versions we disabled bounds narrowing since it led to false positives in many of the tested benchmarks.
+However, the results with enabled narrowing are also presented, in the separate section - [MPX features](/performance#mpx-features).
+
 ## Performance overhead
 
 The first parameter we will consider is slowdown of a protected application:
+
+</div><!-- /.medium-8.columns -->
+<div class="medium-12 medium-pull-12 columns" markdown="1">
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_perf.jpg" alt="Performance overheads of Phoenix">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_perf.jpg" alt="Performance overheads of Parsec">
@@ -73,6 +84,8 @@ They have very high performance cost and therefore, can mask the overhead of mem
 TODO: comparison between MPX and other approaches
 
 TODO: discuss difference between benchmark suits
+
+## MPX features
 
 ## Memory consumption
 
