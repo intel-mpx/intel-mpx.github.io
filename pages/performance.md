@@ -8,7 +8,17 @@ header: no
 permalink: "/performance/"
 ---
 
-## Slowdown
+<div class="row">
+<div class="medium-4 medium-push-8 columns" markdown="1">
+<div class="panel radius" markdown="1">
+**Table of Contents**
+{: #toc }
+*  TOC
+{:toc}
+</div>
+</div><!-- /.medium-4.columns -->
+
+## Performance overhead
 
 The first parameter we will consider is slowdown of a protected application:
 
@@ -95,7 +105,7 @@ TODO: discuss difference between benchmark suits
 This data was removed from the main paper since it does not add more information to the existing discussion. 
 Nevertheless, we leave it here for the sake of completeness.
 
-** Branch instructions and TLB locality**
+**Branch instructions and TLB locality**
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_misc_stat.jpg" alt="Branches and TLB (Phoenix)">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_misc_stat.jpg"  alt="Branches and TLB (Parsec)">
