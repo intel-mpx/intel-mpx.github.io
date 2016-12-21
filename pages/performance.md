@@ -87,6 +87,18 @@ TODO: discuss difference between benchmark suits
 
 ## MPX features
 
+Influence on performance:
+
+<img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mpx_feature_perf.jpg" alt="Performance overheads of Phoenix">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpx_feature_perf.jpg" alt="Performance overheads of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}spec_mpx_feature_perf.jpg" alt="Performance overheads of SPEC">
+
+Influence on memory consumption:
+
+<img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mpx_feature_mem.jpg" alt="Memory consumption overheads of Phoenix">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpx_feature_mem.jpg"  alt="Memory consumption overheads of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}spec_mpx_feature_mem.jpg"    alt="Memory consumption overheads of SPEC">
+
 ## Memory consumption
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mem.jpg" alt="Memory consumption overheads of Phoenix">
