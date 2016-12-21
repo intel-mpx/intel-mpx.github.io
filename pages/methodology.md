@@ -48,19 +48,31 @@ For experiments on case studies (Apache, Nginx, Memcached), we used two machines
 
 * GCC:
     * Version: 6.1.0
-    * Configuration flags: `--enable-languages=c,c++ --enable-libmpx --enable-multilib --with-system-zlib`
+    * Configuration flags:
+```
+--enable-languages=c,c++ --enable-libmpx --enable-multilib --with-system-zlib
+```
 * ICC:
     * Version: 17.0.0
 * LLVM (AddressSanitizer):
     * Version: 3.8.0
-    * Configuration flags (LLVM): `-G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"`
+    * Configuration flags (LLVM):
+```
+-G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"
+```
 * LLVM (SoftBound):
     * Version: 3.4.0
-    * Configuration flags: `--enable-optimized --disable-bindings`
+    * Configuration flags:
+```
+--enable-optimized --disable-bindings
+```
     * [Source](https://github.com/santoshn/softboundcets-34)
 * LLVM (SafeCode):
     * Version: 3.2.0
-    * Configuration flags: `-G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"`
+    * Configuration flags:
+```
+-G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"
+```
     * [Source](http://safecode.cs.illinois.edu/downloads.html)
 
 <small markdown="1">[Up to table of contents](#toc)</small>
@@ -108,10 +120,17 @@ All the benchmarks were compiled together with the libraries they depend upon.
 
 #### GCC implementation of MPX
 
-* compiler flags: `-fcheck-pointer-bounds -mmpx`
-* linker flags: `-lmpx -lmpxwrappers`
-* environment variables:
+Compiler flags:
+```
+-fcheck-pointer-bounds -mmpx
+```
 
+Linker flags:
+```
+-lmpx -lmpxwrappers
+```
+
+Environment variables:
 ```sh
 CHKP_RT_BNDPRESERVE="0"  # support of legacy code, i.e. libraries
 CHKP_RT_MODE="stop"
@@ -121,15 +140,28 @@ CHKP_RT_PRINT_SUMMARY="0"
 
 Subtypes:
 
-* disabled bounds narrowing: `-fno-chkp-narrow-bounds`
-* protecting only memory writes, not reads: `-fno-chkp-check-read`
+* disabled bounds narrowing:
+```
+-fno-chkp-narrow-bounds
+```
+* protecting only memory writes, not reads:
+```
+-fno-chkp-check-read
+```
 
 #### ICC implementation of MPX
 
-* compiler flags: `-check-pointers-mpx=rw`
-* linker flags: `-lmpx`
-* environment variables:
+Compiler flags:
+```
+-check-pointers-mpx=rw
+```
 
+Linker flags:
+```
+-lmpx
+```
+
+Environment variables:
 ```sh
 CHKP_RT_BNDPRESERVE="0"  # support of legacy code, i.e. libraries
 CHKP_RT_MODE="stop"
@@ -139,15 +171,26 @@ CHKP_RT_PRINT_SUMMARY="0"
 
 Subtypes:
 
-* disabled bounds narrowing: `-no-check-pointers-narrowing`
-* protecting only memory writes, not reads: `-check-pointers-mpx=write` instead of `-check-pointers-mpx=rw`
+* disabled bounds narrowing:
+```
+-no-check-pointers-narrowing
+```
+* protecting only memory writes, not reads:
+```sh
+-check-pointers-mpx=write
+# instead of
+-check-pointers-mpx=rw
+```
 
 
 #### AddressSanitizer (both GCC and Clang)
 
-* compiler flags: `-fsanitize=address`
-* environment variables:
+Compiler flags:
+```
+-fsanitize=address
+```
 
+Environment variables:
 ```sh
 ASAN_OPTIONS="verbosity=0:\
 detect_leaks=false:\
@@ -160,16 +203,30 @@ new_delete_type_mismatch=0"
 
 Subtype:
 
-* protecting only memory writes, not reads: `--param asan-instrument-reads=0`
+* protecting only memory writes, not reads:
+```
+--param asan-instrument-reads=0
+```
 
 #### SoftBound
 
-* compiler flags: `-fsoftboundcets -flto -fno-vectorize`
-* linker flags: `-lm -lrt` (runtime library is linked automatically)
+Compiler flags:
+```
+-fsoftboundcets -flto -fno-vectorize
+```
+
+Linker flags:
+```
+-lm -lrt
+```
+Note, that runtime library is linked automatically.
 
 #### SafeCode
 
-* compiler flags: `-fmemsafety -g -fmemsafety-terminate -stack-protector=1`
+Compiler flags:
+```
+-fmemsafety -g -fmemsafety-terminate -stack-protector=1
+```
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
@@ -191,7 +248,7 @@ The received results were checked to fulfil the following criteria:
 
 * application compiled successfully
 * application run successfully (with normal exit code)
-* the output is equal to the output of non-protected application (if it is stable)
+* the output is equal to the output of non-protected application (if it is deterministic)
 * the coefficient of variation among results is less than 5 %
 
 <small markdown="1">[Up to table of contents](#toc)</small>
