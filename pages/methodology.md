@@ -65,6 +65,7 @@ For experiments on case studies (Apache, Nginx, Memcached), we used two machines
 ```
 
 * LLVM (SoftBound):
+    * [Source](https://github.com/santoshn/softboundcets-34)
     * Version: 3.4.0
     * Configuration flags:
     
@@ -72,16 +73,14 @@ For experiments on case studies (Apache, Nginx, Memcached), we used two machines
 --enable-optimized --disable-bindings
 ```
 
-    * [Source](https://github.com/santoshn/softboundcets-34)
 * LLVM (SafeCode):
+    * [Source](http://safecode.cs.illinois.edu/downloads.html)
     * Version: 3.2.0
     * Configuration flags:
     
 ```
 -G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"
 ```
-
-    * [Source](http://safecode.cs.illinois.edu/downloads.html)
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
