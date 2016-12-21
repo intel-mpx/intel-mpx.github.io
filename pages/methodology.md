@@ -274,5 +274,15 @@ The received results were checked to fulfil the following criteria:
 * the output is equal to the output of non-protected application (if it is deterministic)
 * the coefficient of variation among results is less than 5 %
 
+More concrete values of the Coefficient of Variation are presented in the following table:
+
+| Experiment            | Average Coefficient of Variation, % | Maximal Coefficient of Variation, % |
+|:----------------------|------------------------------------:|------------------------------------:|
+| Phoenix (performance) | 0.34                                | 3.87                                |
+| Parsec (performance)  | 0.28                                | 3.75                                |
+| SPEC (performance)    | 0.41                                | 3.96                                |
+| **All**               | **0.35**                            | **3.96**                            |
+
+
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
