@@ -78,29 +78,49 @@ To understand this behavior, we will look at the cache locality of the benchmark
 It appears that native version of Word Count has a significant number of L1 and L2 cache misses.
 They have very high performance cost and therefore, can mask the overhead of memory protection. 
 
-TODO: comparison between MPX and other approaches
+When compared to other approaches, MPX shows much better results than both SoftBound and SafeCode.
+And it is no wonder---they are both implemented purely in software, when MPX has additional support from hardware.
+Nevertheless, AddressSanitizer proves to be a worthy competitor, with better performance than GCC MPX and comparable to ICC MPX.
+But as we will see later, it comes with a price of lower security guaranties.
 
-TODO: discuss difference between benchmark suits
+## Memory consumption
+
+The memory overhead measurements are presented in the next figures:
+
+<img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mem.jpg" alt="Memory consumption overheads of Phoenix">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mem.jpg"  alt="Memory consumption overheads of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}spec_mem.jpg"    alt="Memory consumption overheads of SPEC">
+
+On average, MPX requires 53 % more memory in the ICC version and 154 % in the GCC.
+It is a significant improvement over AddressSanitizer and it comes from two-level address translation scheme.
+AddressSanitizer creates a ``shadow zone'' that is directly mapped to the main memory and therefore, can be quite big.
+On the other hand, MPX has an intermediary Bounds Directory that trades lower memory consumption for longer assess time.
 
 ## MPX features
 
-Influence on performance:
+MPX has two main features that influence both performance and security guaranties: bounds narrowing and only-write protection.
+When *bounds narrowing* is applied, each field of an object has its own bounds.
+It allows to detect overflows not only between objects, but also between fields inside a single object.
+Correspondingly, when this feature increases security level, but may harm performance.
+_Only write protection_, on the other side, improves performance by disabling checks on memory reads.
+
+The comparison of these features is presented in next two sets of figures.
+
+Firstly, influence on performance:
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mpx_feature_perf.jpg" alt="Performance overheads of Phoenix">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpx_feature_perf.jpg" alt="Performance overheads of Parsec">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_mpx_feature_perf.jpg" alt="Performance overheads of SPEC">
 
-Influence on memory consumption:
+Secondly, influence on memory consumption:
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mpx_feature_mem.jpg" alt="Memory consumption overheads of Phoenix">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpx_feature_mem.jpg"  alt="Memory consumption overheads of Parsec">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_mpx_feature_mem.jpg"    alt="Memory consumption overheads of SPEC">
 
-## Memory consumption
-
-<img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mem.jpg" alt="Memory consumption overheads of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mem.jpg"  alt="Memory consumption overheads of Parsec">
-<img class="t20" width="100%" src="{{ site.urlimg }}spec_mem.jpg"    alt="Memory consumption overheads of SPEC">
+As we can see, bounds narrowing has very small impact on performance because it does not change the number of checks.
+At the same time, it may increase memory consumption because it has to keep more bounds.
+Only write checking has the opposite effect - having to instrument less code reduces the slowdown but barely has any impact on memory consumption.
 
 ## Multithreading
 
