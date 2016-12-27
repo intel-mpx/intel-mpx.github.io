@@ -19,8 +19,10 @@ cd ..
 rm -rf images_tmp
 
 # convert
+echo "Converting all images:"
 cd images
 for img in *.pdf; do
+    echo "    - ${img}..."
     convert           \
        -density 350   \
        -trim          \

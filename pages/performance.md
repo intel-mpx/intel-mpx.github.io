@@ -23,9 +23,6 @@ permalink: "/performance/"
 To evaluate the runtime parameters of MPX, we have tested three benchmark suits: Phoenix 2.0, PARSEC 3.0 and SPEC CPU2006 (see [methodology](/methodology#benchmarks) for details).
 To put the results into a context, we measured not only the two implementations of MPX, but also SafeCode, SoftBound and AddressSanitizer.
 
-Note, that in both ICC and GCC versions we disabled bounds narrowing since it led to false positives in many of the tested benchmarks.
-However, the results with enabled narrowing are also presented, in the separate section - [MPX features](/performance#mpx-features).
-
 ## Performance overhead
 
 The first parameter we will consider is slowdown of a protected application:
@@ -109,7 +106,6 @@ Influence on memory consumption:
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_multi.jpg" alt="Multithreading (Phoenix)">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_multi.jpg"  alt="Multithreading (Parsec)">
-<img class="t20" width="100%" src="{{ site.urlimg }}spec_multi.jpg"    alt="Multithreading (SPEC)">
 
 ## Experiments with varying input sizes 
 
