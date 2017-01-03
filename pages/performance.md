@@ -124,8 +124,19 @@ Only write checking has the opposite effect - having to instrument less code red
 
 ## Multithreading
 
+To evaluate the influence of multithreading, we measured and compared execution times of all benchmarks on 2 and 8 threads.
+The approach for enabling multithreading was different for different benchmark suites: for Phoenix it was enough to set a corresponding compilation flag; Parsec required an alternative version of the source code (supplied with the suite).
+SPEC does not have a multithreaded version at all.
+Moreover, both SoftBound and SafeCode are not thread-safe and therefore were excluded from measurements.
+
+Our results are presented in the following figures:
+
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_multi.jpg" alt="Multithreading (Phoenix)">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_multi.jpg"  alt="Multithreading (Parsec)">
+
+As we can see, the difference is minimal.
+For MPX, it is caused by the absence of multithreading support, which means that no additional code is executed in parallel versions.
+The results of AddressSanitizer are similar because it does not require explicit synchronization---it is thread-safe by design.
 
 ## Experiments with varying input sizes 
 
