@@ -49,35 +49,35 @@ For experiments on case studies (Apache, Nginx, Memcached), we used two machines
 * GCC:
     * Version: 6.1.0
     * Configuration flags:
-    
+
 ```
 --enable-languages=c,c++ --enable-libmpx --enable-multilib --with-system-zlib
 ```
 
 * ICC:
     * Version: 17.0.0
-* LLVM (AddressSanitizer):
+* Clang/LLVM (AddressSanitizer):
     * Version: 3.8.0
     * Configuration flags (LLVM):
-    
+
 ```
 -G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"
 ```
 
-* LLVM (SoftBound):
+* Clang/LLVM (SoftBound):
     * [Source](https://github.com/santoshn/softboundcets-34)
     * Version: 3.4.0
     * Configuration flags:
-    
+
 ```
 --enable-optimized --disable-bindings
 ```
 
-* LLVM (SafeCode):
+* Clang/LLVM (SafeCode):
     * [Source](http://safecode.cs.illinois.edu/downloads.html)
     * Version: 3.2.0
     * Configuration flags:
-    
+
 ```
 -G "Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" -DLLVM_TARGETS_TO_BUILD="X86"
 ```
@@ -257,24 +257,27 @@ Compiler flags:
 
 ## Experiments
 
-All experiments were executed 10 times and the results were averaged.
-In case of Phoenix, each experiment was additionally preceded by a "dry run" - a run that was not recorded and served a sole purpose of putting the working set into cache.
+Each program was executed 10 times, and the results were averaged using arithmetic mean.
+The mean across different programs in the benchmark suite was calculated using geometric mean.
+Geometric mean was also used to calculate the "final" mean across three benchmark suites.
+
+In case of Phoenix, each experiment was additionally preceded by a "dry run" - a run that was not recorded and served a sole purpose of putting the working set into the OS I/O cache.
 The goal of this "dry run" was to decrease the variance in the results, since all Phoenix benchmarks are small and "cold" cache might have drastically slowed them down.
 
 We performed the following types of experiments:
 
 * normal: experiments on a single thread (serialized) and with fixed input
 * multithreaded: experiments on 2, 4, and 8 threads
-* variable inputs: experiments with increasing input size. In particular, we were doing 5 runs, each next one having twice bigger input than the previous
+* variable inputs: experiments with increasing input size (5 runs, each next one with an input twice bigger than the previous)
 
-The received results were checked to fulfil the following criteria:
+The received results were checked to fulfill the following criteria:
 
 * application compiled successfully
-* application run successfully (with normal exit code)
+* application run successfully (with zero exit code)
 * the output is equal to the output of non-protected application (if it is deterministic)
 * the coefficient of variation among results is less than 5 %
 
-More concrete values of the Coefficient of Variation are presented in the following table:
+More concrete values of the coefficient of variation (CV) are presented in the following table:
 
 | Experiment            | Average Coefficient of Variation, % | Maximal Coefficient of Variation, % |
 |:----------------------|------------------------------------:|------------------------------------:|
