@@ -32,6 +32,9 @@ Our scripts can be found in the [repository](https://github.com/OleksiiOleksenko
 In our extension, we wrote a loop of 1000 copies of an instruction under the test and run the loop 100 times. This gives us 100,000 executions in total. We run each experiment 10 times to make sure the results were not influenced by external factors.
 For each run, we initialize all BND registers with dummy values to avoid interrupts caused by failed bound checks.
 
+</div><!-- /.medium-8.columns -->
+<div class="medium-12 medium-pull-12 columns" markdown="1">
+
 | Instruction            | Latency | Throughput |   | P0 | P1 | P2 | P3 | P4 | P5 | P6 | P7 |
 |:-----------------------|--------:|-----------:|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | `bndmk b, m`           | 2       | 2          |   | 1  | 1  |    |    |    | 1  | 1  |    |
