@@ -40,9 +40,6 @@ The characteristics of machines and the network can be found in the [Methodology
   * fetching of a 2.3K static web-page
   * using HTTP get
 
-</div><!-- /.medium-8.columns -->
-<div class="medium-12 medium-pull-12 columns" markdown="1">
-
 ### Performance
 <img class="t20" width="75%" src="{{ site.urlimg }}apache_tput.jpg" alt="Apache throughput-latency plot">
 

@@ -26,9 +26,6 @@ permalink: "/security/"
 
 We evaluated all approaches against the RIPE security testbed.[^ripe] RIPE is a synthesized C program that tries to attack itself in a number of ways, by overflowing a buffer allocated on the stack, heap, or in data or BSS segments. RIPE can imitate up to 850 attacks, including shellcode, return-into-libc, and return-oriented programming.
 
-</div><!-- /.medium-8.columns -->
-<div class="medium-12 medium-pull-12 columns" markdown="1">
-
 To evaluate security of approaches, we disabled all other security features:
 
 * Linux ASLR was disabled via `sudo bash -c 'echo 0 > /proc/sys/kernel/randomize_va_space'`
