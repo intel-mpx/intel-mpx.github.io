@@ -49,8 +49,8 @@ for (i=0; i<M; i++):
     total += len                // Total length of all objs
 ```
 
-The program allocates an array `a[10]` with 10 pointers to some buffer objects of type `obj` (Line 1).
-Next, it iterates through the first `M` items of the array to calculate the sum of objects' length values (Lines 2-7).
+The program allocates an array `a[10]` with 10 pointers to some buffer objects of type `obj` (Line 2).
+Next, it iterates through the first `M` items of the array to calculate the sum of objects' length values (Lines 4-9).
 In C, this loop would look like this:
 
 ```c
@@ -59,14 +59,14 @@ for (i=0; i<M; i++) {
 }
 ```
 
-Note how the array item access `a[i]` decays into a pointer `ai` on Line 3, and how the subfield access decays to `lenptr` on Line 5.
+Note how the array item access `a[i]` decays into a pointer `ai` on Line 5, and how the subfield access decays to `lenptr` on Line 7.
 
 When Intel MPX protection is applied, the code transforms into the following:
 
 ```c
 obj* a[10]
-total = 0
 a_b = bndmk a, a+79          // Make bounds [a, a+79]
+total = 0
 for (i=0; i<M; i++):
     ai = a + i
     bndcl a_b, ai            // Lower-bound check of a[i]
@@ -81,15 +81,15 @@ for (i=0; i<M; i++):
 ```
 
 First, the bounds for the array `a[10]` are created on Line 2 (the array contains 10 pointers each 8 bytes wide, hence the upper-bound offset of 79).
-Then in the loop, before the array item access on Line 7, two MPX bounds checks are inserted to detect if `a[i]` overflows (Lines 5-6).
-Note that since the protected load reads an 8-byte pointer from memory, it is important to check `ai+7` against the upper bound (Line 6).
+Then in the loop, before the array item access on Line 8, two MPX bounds checks are inserted to detect if `a[i]` overflows (Lines 6-7).
+Note that since the protected load reads an 8-byte pointer from memory, it is important to check `ai+7` against the upper bound (Line 7).
 
 Now that the pointer to the object is loaded in `objptr`, the program wants to load the `obj.len` subfield.
 By design, MPX must protect this second load by checking the bounds of the `objptr` pointer.
 Where does it get these bounds from?
 In MPX, every pointer stored in memory has its associated bounds also stored in a special memory region accessed via `bndstx` and `bndldx` MPX instructions (see next subsection for details).
-Thus, when the `objptr` pointer is retrieved from memory address `ai`, its corresponding bounds are retrieved using `bndldx` from the same address (Line 8).
-Finally, the two bounds checks are inserted before the load of the length value on Lines 10-11.
+Thus, when the `objptr` pointer is retrieved from memory address `ai`, its corresponding bounds are retrieved using `bndldx` from the same address (Line 9).
+Finally, the two bounds checks are inserted before the load of the length value on Lines 11-12.
 
 In the following, we detail how Intel MPX support is implemented at each level of the hardware-software stack.
 
@@ -210,8 +210,7 @@ Consider struct `obj` from our first code snippet.
 It contains two fields: a 100B buffer `buf` and an integer `len` right after it.
 It is easy to see that an off-by-one overflow in `obj.buf` will spillover and corrupt the adjacent `obj.len`.
 AddressSanitizer and SafeCode by design cannot detect such intra-object overflows (though AddressSanitizer can be used to [detect a subset of such errors](https://github.com/google/sanitizers/wiki/AddressSanitizerIntraObjectOverflow)).
-In contrast, Intel MPX can be instructed to narrow bounds when code accesses a specific field of a struct, e.g., on Line 9.
-Here, instead of checking against the bounds of the full object, the compiler would shrink `objptr_b` to only four bytes and compare against these narrowed bounds on Lines 10-11.
+In contrast, Intel MPX can be instructed to narrow bounds when code accesses a specific field of a struct.
 Narrowing of bounds may require (sometimes intrusive) changes in the source code, and thus represents a decision point on the security-usability scale.
 
 By default, the MPX pass instruments both memory writes and reads: this ensures protection from buffer overwrites and buffer overreads.
@@ -230,7 +229,7 @@ There are two common optimizations used by GCC and ICC.
 2. Moving (hoisting) bounds-checks out of simple loops.
 
 Consider our example.
-If it is known that `M<=10`, then optimization (1) can remove always-true checks on Lines 5-6.
+If it is known that `M<=10`, then optimization (1) can remove always-true checks on Lines 7-8.
 Otherwise, optimization (2) can kick in and move these checks before the loop body, saving two instructions on each iteration.
 
 Interestingly, current implementations of GCC and ICC take different stances when it comes to optimizing MPX code.
