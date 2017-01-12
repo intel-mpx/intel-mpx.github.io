@@ -43,8 +43,8 @@ obj* a[10]                      // Array of pointers to objs
 total = 0
 for (i=0; i<M; i++):
     ai = a + i                  // Pointer arithmetic on a
-    objptr = load ai            // Pointer to obj at a[i]}
-    lenptr = objptr + 100       // Pointer to obj.len}
+    objptr = load ai            // Pointer to obj at a[i]
+    lenptr = objptr + 100       // Pointer to obj.len
     len = load lenptr
     total += len                // Total length of all objs
 ```
