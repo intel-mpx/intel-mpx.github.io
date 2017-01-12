@@ -232,10 +232,10 @@ Similar to the previous observation, this is an issue with hyperthreading: MPX i
 
 ## Varying input sizes
 
-In all previous experiments we used constant input sizes.
-However, different working sets may have different cache behaviors, which causes changes in overheads.
-To investigate this issue, we conducted a set of experiments with varying inputs.
-We picked 4 benchmarks from each of the considered suites and ran them with 3 inputs, each next one twice bigger than previous.
+In all previous experiments we used constant (reference) input sizes.
+However, different input sizes (working sets) may cause different cache behaviors, which in tern causes changes in overheads.
+To investigate the extent of such effects, we conducted a set of experiments with varying inputs.
+We picked four benchmarks from each suite and ran them with three inputs---small, medium, and large---each next one twice bigger than the previous.
 The results are presented in the next two sections.
 
 ### Performance
@@ -244,15 +244,15 @@ The results are presented in the next two sections.
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_var_input_perf.jpg"  alt="Varying inputs - performance (Parsec)">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_var_input_perf.jpg"    alt="Varying inputs - performance (SPEC)">
 
-Generally, working set size has very little impact on performance overhead of any of the considered approaches, although there are some peculiar cases.
+Generally, the input size has very little impact on performance overhead of any of the considered approaches, although there are some peculiar cases.
 
 **Observation 1**: As mentioned in [Cache utilization](/performance/#cache-utilization), the overhead in `word_count` is partially masked by the high number of cache misses.
 Since "small" input causes less cache misses, the masking effect is smaller and the overall overhead gets higher.
-Same goes for `libquantum`.
+The same goes for `libquantum`.
 
-**Observation 2**: In the native version of `matrix_multiply` IPC gets higher when the input growth, but in GCC-MPX version it stays roughly the same. It means that protection creates additional data dependencies that are partially blocking instruction-level parallelism (ILP). Correspondingly, the overhead growth.
+**Observation 2**: In the native version of `matrix_multiply`, IPC gets higher with the input growth, but in the GCC-MPX version it stays roughly the same. It means that GCC-MPX creates additional data dependencies that are partially blocking instruction-level parallelism (ILP). Correspondingly, the overhead grows.
 
-**Observation 3**: MPX-ICC version of `canneal` has higher overhead with medium input than with the two others, which can be explained by cache locality. In native version both small and medium inputs have very small percentage of LLC misses (0.08% and 3.67%, correspondingly) and only large input reaches the cache size (41,3% misses). The MPX version, on the contrary, has higher difference between small and medium inputs (39% and 68% LLC misses) than between medium and large (grows from 68% to 75%). Therefore, the relative overhead has a bump in the middle. 
+**Observation 3**: The MPX-ICC version of `canneal` has higher overhead with medium input than with the two others, which is explained by cache locality. In the native version both small and medium inputs have very small percentage of LLC misses (0.08% and 3.67% correspondingly) and only the large input starts overflowing the cache (41.3% misses). The MPX-ICC version, on the contrary, has higher difference between small and medium inputs (39% and 68% LLC misses) than between medium and large (68% and 75%). Therefore, the performance overhead line has a bump on the medium input.
 
 
 ### Memory consumption
@@ -261,18 +261,18 @@ Same goes for `libquantum`.
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_var_input_mem.jpg"  alt="Varying inputs - memory (Parsec)">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_var_input_mem.jpg"    alt="Varying inputs - memory (SPEC)">
 
-In contrast to performance, the general tendency for memory is overhead reduction when input size increases.
-It is caused by the fact that all protections have a part of the memory overhead which is constant (e.g., Shadow Memory in Address Sanitizer or Bounds Directory in MPX). 
-Accordingly, when the memory consumption increases, the share of this part becomes smaller and the overall memory overhead decreases. 
+In contrast to performance which stays roughly the same with bigger inputs, the memory overheads tend to reduce when input size increases.
+It is caused by the fact that all protection approaches have a significant part of memory overhead which is *constant* (e.g., Shadow Memory in Address Sanitizer or Bounds Directory in MPX).
+Accordingly, when the memory consumption increases, the share of this constant overhead becomes smaller and the overall memory overhead decreases.
 
-**Observation 1**: Some benchmarks have a reversed tendency in MPX versions---for both `streamcluster` and `canneal` overhead raises with growth of the input.
+**Observation 1**: Some benchmarks have a reversed tendency in MPX versions---for both `streamcluster` and `canneal` the overhead increases with bigger inputs.
 It means that most of it comes from the dynamic part---Bounds Tables.
-Indeed, if we compare ICC and GCC versions of `streamcluster`, we see that ICC has a stable number of BTs (6 for all inputs) whereas in GCC the amount of BTs grows with the input (8, 11, and 16 BTs).
+Indeed, if we compare ICC and GCC versions of `streamcluster`, we see that ICC has a stable number of BTs (6 for all inputs) whereas in GCC the amount of BTs grows with bigger inputs (8, 11, and 16 BTs).
 Consequently, these two versions have opposite dynamics.
 
 **Observation 2**: `libquantum` and `dealII` have a bump in AddressSanitizer versions.
-It is caused by the quarantine zone, which may take a lot of space when memory regions are often allocated and freed.
-Accordingly, when we repeated the experiment with a quarantine zone of a small size (1MB), the dynamics became similar to other benchmarks---the overhead was steadily decreasing. 
+It is caused by the *quarantine zone* which may take a lot of space when memory regions are constantly allocated and freed.
+To prove it, we repeated the experiment with a quarantine zone of a small size (1MB): the dynamics became similar to other benchmarks, i.e., the overhead was steadily decreasing.
 
 ## Other statistics
 
