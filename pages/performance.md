@@ -81,16 +81,20 @@ Thus, one could expect sufficiently low performance overheads of MPX once the th
 
 Many programs do not utilize the CPU execution-unit resources fully.
 For example, the theoretical IPC (instructions/cycle) of our machine is ~5, but many programs achieve only 1-2 IPC in native executions.
-Thus, memory-safety techniques benefit from underutilized CPU and partially hide their performance overhead.
+Thus, memory-safety techniques benefit from underutilized CPU and partially mask their performance overhead.
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_ipc.jpg" alt="IPC of Phoenix">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_ipc.jpg" alt="IPC of Parsec">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_ipc.jpg" alt="IPC of SPEC">
 
-**Observation 1**: Software-only approaches---especially AddressSanitizer and SoftBound---significantly increase IPC, partially hiding performance overheads.
-On the other side, MPX---being a HW-assisted approach---does not increase IPC because it does not insert that many instructions.
+**Observation 1**: MPX does not increase IPC.
+We do not have an empirical proof (yet), but our suspicion is that bounds checking instructions (`bndcl`, `bndcu`, and `bndcn`) are considered by the processor as a data dependency to subsequent memory accesses.
+If it is true, it significantly hinders performance of MPX.
+Moreover, it might be the main reason for such high overheads. 
 
-**Observation 2**: Some programs have very low IPC: `word_count`, `canneal`, `mcf`, and `omnet` are examples. This indicates that these programs are not compute-intensive but rather memory-intensive. The next figure proves it.
+**Observation 2**: Software-only approaches---especially AddressSanitizer and SoftBound---significantly increase IPC, partially hiding performance overheads.
+
+**Observation 3**: Some programs have very low IPC (e.g, `word_count`, `canneal`, `mcf`, and `omnet`). This indicates that these programs are not compute-intensive but rather memory-intensive. The next figure proves it.
 
 ### Cache utilization
 

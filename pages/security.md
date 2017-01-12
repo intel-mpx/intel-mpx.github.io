@@ -94,7 +94,7 @@ Below are the logs which show which attacks worked under each approach.
 
 ## Bugs in Benchmark Suites  {#others}
 
-During our experiments, we found `6` real out-of-bounds bugs (true positives). Five of these bugs were already known, and one was detected by GCC-MPX and was not previously reported.
+During our experiments, we found **6** real out-of-bounds bugs (true positives). Five of these bugs were already known, and one was detected by GCC-MPX and was not previously reported.
 
 The bugs found are:
 
