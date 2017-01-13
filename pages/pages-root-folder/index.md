@@ -36,6 +36,8 @@ This web-site contains complete results of the evaluation of Intel Memory Protec
 * **security** -- qualitative and quantitative analysis of bugs/vulnerabilities detected,
 * **usability** -- analysis of production quality and program-specific issues.
 
+{% include alert text='Our work is still in progress. Please refrain from sharing and mentioning it.' %}
+
 ### What is Intel MPX?
 
 In August 2015, Intel released Memory Protection Extensions (Intel MPX).
@@ -113,8 +115,8 @@ We tested Intel MPX on three real-world case-studies: Apache, Nginx, and Memcach
 For [Apache](/case-studies#apache) and [Nginx](/case-studies#nginx), MPX performed well and on par with AddressSanitizer, achieving 85-95% of native throughput.
 For [Memcached](/case-studies#memcached), however, MPX could reach only 50% throughput, performing much worse than AddressSanitizer.
 
-**Lesson 5: AddressSanitizer is currently the best solution for debugging and security.**
-In our experience, AddressSanitizer is the best choice in terms of performance, usability, and security, even though it provides weaker guarantees than MPX.
+**Lesson 5: AddressSanitizer is currently the optimal solution.**
+In our experience, AddressSanitizer is the best choice in terms of performance and usability, even though it provides weaker security guarantees than MPX.
 The other two techniques---SoftBound and SafeCode research prototypes---are unstable and cannot compile/run correctly many of the evaluated programs.
 
 

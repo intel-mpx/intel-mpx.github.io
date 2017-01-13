@@ -38,15 +38,15 @@ The sole purpose of Intel MPX is to transparently add bounds checking to legacy 
 Consider the following code snippet:
 
 ```c
-struct obj { char buf[100];  int len }
-obj* a[10]                      // Array of pointers to objs
-total = 0
-for (i=0; i<M; i++):
-    ai = a + i                  // Pointer arithmetic on a
-    objptr = load ai            // Pointer to obj at a[i]
-    lenptr = objptr + 100       // Pointer to obj.len
-    len = load lenptr
-    total += len                // Total length of all objs
+   struct obj { char buf[100];  int len }
+1: obj* a[10]                      // Array of pointers to objs
+2: total = 0
+3: for (i=0; i<M; i++):
+4:     ai = a + i                  // Pointer arithmetic on a
+5:     objptr = load ai            // Pointer to obj at a[i]
+6:     lenptr = objptr + 100       // Pointer to obj.len
+7:     len = load lenptr
+8:     total += len                // Total length of all objs
 ```
 
 The program allocates an array `a[10]` with 10 pointers to some buffer objects of type `obj` (Line 2).
@@ -64,20 +64,20 @@ Note how the array item access `a[i]` decays into a pointer `ai` on Line 5, and 
 When Intel MPX protection is applied, the code transforms into the following:
 
 ```c
-obj* a[10]
-a_b = bndmk a, a+79          // Make bounds [a, a+79]
-total = 0
-for (i=0; i<M; i++):
-    ai = a + i
-    bndcl a_b, ai            // Lower-bound check of a[i]
-    bndcu a_b, ai+7          // Upper-bound check of a[i]
-    objptr = load ai
-    objptr_b = bndldx ai     // Bounds for pointer at a[i]
-    lenptr = objptr + 100
-    bndcl objptr_b, lenptr   // Checks of obj.len
-    bndcu objptr_b, lenptr+3 
-    len = load lenptr
-    total += len
+1: obj* a[10]
+2: a_b = bndmk a, a+79          // Make bounds [a, a+79]
+3: total = 0
+4: for (i=0; i<M; i++):
+5:     ai = a + i
+6:     bndcl a_b, ai            // Lower-bound check of a[i]
+7:     bndcu a_b, ai+7          // Upper-bound check of a[i]
+8:     objptr = load ai
+9:     objptr_b = bndldx ai     // Bounds for pointer at a[i]
+10:    lenptr = objptr + 100
+11:    bndcl objptr_b, lenptr   // Lower-bound check of obj.len
+12:    bndcu objptr_b, lenptr+3 // Upper-bound check of obj.len
+13:    len = load lenptr
+14:    total += len
 ```
 
 First, the bounds for the array `a[10]` are created on Line 2 (the array contains 10 pointers each 8 bytes wide, hence the upper-bound offset of 79).
@@ -94,6 +94,8 @@ Finally, the two bounds checks are inserted before the load of the length value 
 In the following, we detail how Intel MPX support is implemented at each level of the hardware-software stack.
 
 ## Hardware
+
+{% include alert text='The corresponding microbenchmark with latencies and throughputs of individual MPX instructions is found in [Microbenchmarks](/microbenchmarks#mpxinstr).' %}
 
 At its core, Intel MPX provides 7 new instructions and a set of 128-bit bounds registers.
 The current Intel Skylake architecture provides four registers named `bnd0-bnd3`.
@@ -126,7 +128,7 @@ Accordingly, all additional bounds have to be stored (spilled) in memory, simila
 A simple and relatively fast option is to copy them directly into a compiler-defined memory location (on stack) with `bndmov`.
 However, it works only inside a single stack frame: if a pointer is later reused in another function, its bounds will be lost.
 To solve this issue, two instructions were introduced---`bndstx` and `bndldx`.
-They store/load bounds to/from a memory location derived from the address of the pointer itself, thus making it easy to find pointer bounds without any additional information, though at a price of higher complexity. 
+They store/load bounds to/from a memory location derived from the address of the pointer itself, thus making it easy to find pointer bounds without any additional information, though at a price of higher complexity.
 
 When `bndstx` and `bndldx` are used, bounds are stored in a memory location calculated with two-level address translation scheme, similar to virtual address translation (paging).
 In particular, each pointer has an entry in a Bounds Table (BT), which is allocated dynamically and is comparable to a page table.
@@ -136,7 +138,7 @@ For a specific pointer, its entries in the BD and the BT are derived from the me
 Note that our comparison to paging is only conceptual; the implementation side differs significantly.
 Firstly, the MMU is not involved in the translation and all operations are performed by the CPU itself.
 Secondly and most importantly, MPX does not have a dedicated cache (such as a TLB cache), thus it has to share normal caches with application data.
-In some cases, it may lead to extreme performance degradation caused by cache thrashing. 
+In some cases, it may lead to extreme performance degradation caused by cache thrashing.
 
 The address translation itself is a multistage process.
 Consider loading of pointer bounds:
@@ -153,7 +155,13 @@ This is required for interoperability with legacy code and only happens when som
 This operation is expensive---it requires approximately 3 register-to-register moves, 3 shifts, and 2 memory loads.
 On top of it, since these memory accesses are non-contiguous, the protected application will have worse cache locality.
 
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+
+
 ## Operating System
+
+{% include alert text='The corresponding microbenchmark to measure performance overhead of MPX Bounds Tables management is found in [Microbenchmarks](/microbenchmarks#os).' %}
 
 The operating system has two main responsibilities in the context of MPX: it handles bounds violations and manages BTs, i.e., creates and deletes them.
 Both these actions are hooked to a new class of exceptions, #BR, which has been introduced solely for MPX and is similar to a page fault, although with extended functionality.
@@ -161,7 +169,7 @@ Both these actions are hooked to a new class of exceptions, #BR, which has been 
 If an MPX-enabled CPU detects a bounds violation, i.e., if a referenced pointer appears to be outside of the checked bounds, #BR is raised and the processor traps into the kernel (in case of Linux).
 The kernel decodes the instruction to get the violating address and the violated bounds, and stores them in the `siginfo` structure.
 Afterwards, it delivers the SIGSEGV signal to the application together with information about the violation in the `siginfo` structure.
-At this point the application developer has a choice: she can either provide an ad-hoc signal handler to recover or choose one of the default policies: crash, print an error and continue, or silently ignore it. 
+At this point the application developer has a choice: she can either provide an ad-hoc signal handler to recover or choose one of the default policies: crash, print an error and continue, or silently ignore it.
 
 Two levels of bounds address translation are managed differently: BDs are allocated only once by a runtime library (at application startup) and BTs have to be created dynamically on-demand.
 The later is a task of OS.
@@ -172,19 +180,24 @@ The procedure is presented in the next figure.
 Each time an application tries to store pointer bounds (1), the CPU loads the corresponding entry from the BD and checks if it contains a valid entry (2).
 If the check fails, the CPU raises #BR and traps into the kernel (3).
 The kernel allocates a new BT (4), stores its address in the BD entry (5) and returns in the user space (6).
-Then, the CPU stores bounds in the newly created BT and continues executing the application in the normal mode of operation (7). 
+Then, the CPU stores bounds in the newly created BT and continues executing the application in the normal mode of operation (7).
 
 Since the application is oblivious of BT allocation, the OS also has to free these tables.
 In Linux, this "garbage collection" is performed whenever a memory object if freed or, more precisely, unmapped.
 OS goes through the object and removes all the corresponding BT entries.
-If one of the tables becomes completely unused, OS will free the BT and remove its entry in the BD. 
+If one of the tables becomes completely unused, OS will free the BT and remove its entry in the BD.
 
 In this section, we discussed only Linux implementation.
 However, all the same mechanisms can also be found in Windows.
 The only significant difference is that MPX support on Windows is done by a daemon, while on Linux the functionality is implemented in the kernel itself.
 
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+
 
 ## Compiler and Runtime Library
+
+{% include alert text='The corresponding microbenchmark to measure performance overheads of separate MPX features is found in [Microbenchmarks](/microbenchmarks#performance).' %}
 
 Hardware MPX support in the form of new instructions and registers significantly lowers performance overhead of each separate bounds-checking operation.
 However, the main burden of efficient, correct, and complete bounds checking of whole programs lies on the compiler and its associated runtime.
@@ -267,8 +280,14 @@ For use in production, these libraries must be expanded to cover _all_ of libc.
 Second, while most wrappers follow a simple pattern of "check bounds and call real function", there exist more complicated cases.
 For example, `memcpy` must be implemented so that it copies not only the contents of one memory area to another, but also all associated pointer bounds in BTs.
 
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+
 
 ## Application
+
+{% include alert text='In its current state, Intel MPX does not support multithreading. The microbenchmark that highlights this issue is found in [Microbenchmarks](/microbenchmarks#multithreading).' %}
+
 
 ### Not supported C idioms
 
@@ -299,3 +318,6 @@ Ultimately, all such non-compliant cases must be fixed (indeed, we patched most 
 However, sometime the user may have strong incentives against modifying the original code.
 In this case, she can opt for slightly worse security guarantees and disable narrowing of bounds via a `fno-chkp-narrow-bounds` flag.
 Another non-intrusive alternative is to mark objects that must _not_ be narrowed (e.g., flexible arrays) with a special MPX-related compiler attribute.
+
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }

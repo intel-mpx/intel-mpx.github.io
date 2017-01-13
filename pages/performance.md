@@ -90,7 +90,7 @@ Thus, memory-safety techniques benefit from underutilized CPU and partially mask
 **Observation 1**: MPX does not increase IPC.
 We do not have an empirical proof (yet), but our suspicion is that bounds checking instructions (`bndcl`, `bndcu`, and `bndcn`) are considered by the processor as a data dependency to subsequent memory accesses.
 If it is true, it significantly hinders performance of MPX.
-Moreover, it might be the main reason for such high overheads. 
+Moreover, it might be the main reason for such high overheads.
 
 **Observation 2**: Software-only approaches---especially AddressSanitizer and SoftBound---significantly increase IPC, partially hiding performance overheads.
 
@@ -299,6 +299,8 @@ E.g., the correlation between the percentage of memory accesses, the number of i
 
 
 ### Branches and TLB
+
+We found these results uninteresting but report them here for completeness.
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_misc_stat.jpg" alt="Branches and TLB (Phoenix)">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_misc_stat.jpg"  alt="Branches and TLB (Parsec)">

@@ -35,7 +35,7 @@ All the experiments were performed on the following setup:
 
 #### Network
 
-For experiments on case studies (Apache, Nginx, Memcached), we used two machines with the network bandwidth between them equal to **938 Mbits/sec** as measured by iperf.
+For experiments on [case studies](/case-studies), we used two machines with the network bandwidth between them equal to **938 Mbits/sec** as measured by iperf.
 
 
 #### Software infrastructure
@@ -91,7 +91,7 @@ For experiments on case studies (Apache, Nginx, Memcached), we used two machines
 
 We've used the following tools for measurements:
 
-* [perf stat](https://perf.wiki.kernel.org/index.php/Tutorial). It was our main tool, which we used to measure all CPU-related parameters. Full list includes:
+* [perf stat](https://perf.wiki.kernel.org/index.php/Tutorial). Our main tool used to measure all CPU-related parameters. Full list includes:
 
 ```
 -e cycles,instructions,instructions:u,instructions:k
@@ -103,10 +103,10 @@ We've used the following tools for measurements:
 -e LLC-store-misses,LLC-stores
 ```
 
-Not to introduce an additional error, we've measured these parameters by parts, 8 parameters at a time.
+Not to introduce additional measurement error, we measured these parameters in parts, 8 parameters at a time.
 
-* [time](https://linux.die.net/man/1/time). Since `perf` doesn't provide capabilities for measuring physical memory consumption of a process, we had to use `time --verbose` and collect maximum resident set size.
-* [Intel Pin](https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool). To gather MPX instruction statistics, we've used Pin tool, which allows to write custom binary instrumentations. Full code of our instrumentation can be found in the [repository](/404/).
+* [time](https://linux.die.net/man/1/time). Since `perf` does not provide capabilities for measuring physical memory consumption of a process, we used `time --verbose` and collected maximum resident set size.
+* [Intel Pin](https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool). To gather MPX instruction statistics, we developed a Pin tool. Full code of our instrumentation can be found in the [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/dev/install/compilers/pintool).
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
@@ -115,9 +115,9 @@ Not to introduce an additional error, we've measured these parameters by parts, 
 ## Benchmarks
 
 We used three benchmark suits in our evaluation: [Parsec 3.0](http://parsec.cs.princeton.edu/), [Phoenix 2.0](https://github.com/kozyraki/phoenix/tree/master/sample_apps) and [SPEC CPU 2006](https://www.spec.org/cpu2006/).
-During our work, we found and fixed a set of bugs in them (see [Bugs in benchmarks](/bugs/) for details).
+During our work, we found and [fixed a set of bugs in them ](/usability#usabilitytable).
 
-All the benchmarks were compiled together with the libraries they depend upon.
+All the benchmarks were compiled together with the libraries they depend upon (except `raytrace` from Parsec which requires X11 libraries).
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
@@ -241,7 +241,6 @@ Linker flags:
 ```
 -lm -lrt
 ```
-Note, that runtime library is linked automatically.
 
 #### SafeCode
 
@@ -270,21 +269,20 @@ We performed the following types of experiments:
 * multithreaded: experiments on 2, 4, and 8 threads
 * variable inputs: experiments with increasing input size (5 runs, each next one with an input twice bigger than the previous)
 
-The received results were checked to fulfill the following criteria:
+The results were checked to fulfill the following criteria:
 
 * application compiled successfully
 * application run successfully (with zero exit code)
 * the output is equal to the output of non-protected application (if it is deterministic)
-* the coefficient of variation among results is less than 5 %
 
-More concrete values of the coefficient of variation (CV) are presented in the following table:
+Values of coefficient of variation (CV) are presented in the following table:
 
-| Experiment            | Average Coefficient of Variation, % | Maximal Coefficient of Variation, % |
-|:----------------------|------------------------------------:|------------------------------------:|
-| Phoenix (performance) | 0.34                                | 3.87                                |
-| Parsec (performance)  | 0.28                                | 3.75                                |
-| SPEC (performance)    | 0.41                                | 3.96                                |
-| **All**               | **0.35**                            | **3.96**                            |
+| Experiment            | Average CV, % | Maximum CV, % |
+|:----------------------|--------------:|--------------:|
+| Phoenix               | 0.34          | 3.87          |
+| Parsec                | 0.28          | 3.75          |
+| SPEC                  | 0.41          | 3.96          |
+| **All**               | **0.35**      | **3.96**      |
 
 
 <small markdown="1">[Up to table of contents](#toc)</small>

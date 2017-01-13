@@ -27,9 +27,9 @@ permalink: "/microbenchmarks/"
 
 The following table shows the latency-throughput results of Intel MPX instructions.
 For this evaluation, we extended the scripts used to build Agner Fog's instruction tables.[^agnerfog]
-Our scripts can be found in the [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/asm_measurements).
+Our scripts can be [downloaded here]({{ site.url }}{{ site.baseurl }}/code/asm_measurements.zip).
 
-In our extension, we wrote a loop of 1000 copies of an instruction under the test and run the loop 100 times. This gives us 100,000 executions in total. We run each experiment 10 times to make sure the results were not influenced by external factors.
+In our extension, we wrote a loop with 1,000 copies of an instruction under test and run the loop 100 times. This gives us 100,000 executions in total. We run each experiment 10 times to make sure the results were not influenced by external factors.
 For each run, we initialize all BND registers with dummy values to avoid interrupts caused by failed bound checks.
 
 | Instruction            | Latency | Throughput |   | P0 | P1 | P2 | P3 | P4 | P5 | P6 | P7 |
@@ -61,9 +61,9 @@ The serious bottleneck is storing/loading the bounds with `bndstx` and `bndldx` 
 
 Intel MPX relies on the operating system to manage special Bounds Tables (BTs) that hold pointer metadata.
 To illustrate the additional overhead of allocating and de-allocating BTs, two microbenchmarks showcase the worst case scenarios.
-The source code for them can be found in the [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/table_allocation).
+The source code for them [can be found here]({{ site.url }}{{ site.baseurl }}/code/table_allocation.c).
 
-The first one stores a large set of pointers in such memory locations that each of them will have a separate BT, i.e., this benchmark indirectly creates a huge amount of bounds tables.
+The first microbenchmark stores a large set of pointers in such memory locations that each of them will have a separate BT, i.e., this benchmark indirectly creates a huge amount of bounds tables.
 The second one does the same, but additionally frees all the memory right after it has been assigned, thus triggering BT de-allocation.
 
 The characteristics of microbenchmarks:
@@ -91,7 +91,7 @@ It means that the overhead is caused purely by the BT management in the kernel.
 
 We conclude that OS can account for performance overhead of 2.3× in the worst case.
 
-More statistics collected can be found here: [os_microbenchmark.md]({{ site.url }}{{ site.baseurl }}/code/os_microbenchmark.md)
+More statistics collected can be found here: [os_microbenchmark.md]({{ site.url }}{{ site.baseurl }}/code/os_microbenchmark.md).
 
 
 <small markdown="1">[Up to table of contents](#toc)</small>
@@ -102,12 +102,12 @@ More statistics collected can be found here: [os_microbenchmark.md]({{ site.url 
 
 Below are the four microbenchmarks, each highlighting a separate MPX feature:
 
-* [arraywrite](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/arraywrite): writing to memory (stress `bndcl` and `bndcu`)
-* [arrayread](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/arrayread): reading from memory (stress `bndcl` and `bndcu`)
-* [struct](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/struct): writing in an inner array inside a struct (the bounds-narrowing feature via `bndmk` and `bndmov`)
-* [ptrcreation](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/ptrcreation): assigning new values to pointers (stress `bndstx`)
+* [arraywrite]({{ site.url }}{{ site.baseurl }}/code/arraywrite.c): writing to memory (stress `bndcl` and `bndcu`)
+* [arrayread]({{ site.url }}{{ site.baseurl }}/code/arrayread.c): reading from memory (stress `bndcl` and `bndcu`)
+* [struct]({{ site.url }}{{ site.baseurl }}/code/struct.c): writing in an inner array inside a struct (the bounds-narrowing feature via `bndmk` and `bndmov`)
+* [ptrcreation]({{ site.url }}{{ site.baseurl }}/code/ptrcreation.c): assigning new values to pointers (stress `bndstx`)
 
-All microbenchmarks were compiled with at least `-O2` optimizations.
+All microbenchmarks were compiled with `-O2` optimizations.
 
 Performance results:
 
@@ -140,14 +140,14 @@ A "pointer bounds" data race happens on the `arr` array of pointers. The backgro
 The test cases are compiled and run as follows:
 
 * false negative:
-  * found in [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/multithreading_fn)
+  * [source code]({{ site.url }}{{ site.baseurl }}/code/multithreading_fn.c)
   * compile at `-O1` to have simple non-vectorized asm
   * run with `CHKP_RT_MODE=count CHKP_RT_PRINT_SUMMARY=1 CHKP_RT_VERBOSE=0 ./gcc_mpx/multithreading_fn`
   * Results:
     * in *correct* MPX implementation, output must be *10,000,000* (`ITERATIONS*MAXSIZE`)
     * in current GCC and ICC implementations, output is **less** than 10,000,000 (due to broken multithreading)
 * false positive:
-  * found in [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/src/micro/perf/multithreading_fp)
+  * [source code]({{ site.url }}{{ site.baseurl }}/code/multithreading_fp.c)
   * compile at `-O1` to have simple non-vectorized asm
   * run with `CHKP_RT_MODE=count CHKP_RT_PRINT_SUMMARY=1 CHKP_RT_VERBOSE=0 ./gcc_mpx/multithreading_fp`
   * Results:

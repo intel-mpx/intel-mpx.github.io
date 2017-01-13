@@ -47,7 +47,7 @@ Additional statistics[^stats]:
 
 |                        | Native | MPX  | ASan |
 |:-----------------------|-------:|-----:|-----:|
-| Throughput (MBit/s)    | 865    | 850  | 865  |
+| Network utilization  (MBit/s)    | 865    | 850  | 865  |
 | CPU utilization (%)    | 480    | 510  | 500  |
 | Instructions/cycle     | 0.6    | 0.63 | 0.74 |
 |----
@@ -66,7 +66,7 @@ Additional statistics[^stats]:
 ### Security
 
 * **Bug**: Heartbleed, [official web-site](http://heartbleed.com/) and [detailed explanation](http://www.theregister.co.uk/2014/04/09/heartbleed_explained/)
-* **Exploit script**: [by Jared Stafford and Travis Lee](https://github.com/OleksiiOleksenko/mpx_evaluation/blob/dev/experiments/exp_apache_security/heartbleed.py)
+* **Exploit script**: [by Jared Stafford and Travis Lee]({{ site.url }}{{ site.baseurl }}/code/heartbleed.py)
 
 **Results**:
 
@@ -107,7 +107,7 @@ Additional statistics[^stats]:
 
 |                        | Native | MPX  | ASan |
 |:-----------------------|-------:|-----:|-----:|
-| Throughput (MBit/s)    | 850    | 840  | 840  |
+| Network utilization  (MBit/s)    | 850    | 840  | 840  |
 | CPU utilization (%)    | 225    | 265  | 300 |
 | Instructions/cycle     | 0.81   | 0.82 | 0.81 |
 |----
@@ -129,7 +129,7 @@ Additional statistics[^stats]:
 ### Security
 
 * **Bug**: Stack buffer overflow, [CVE-2013-2028](http://cve.mitre.org/cgi-bin/cvename.cgi?name=cve-2013-2028) and [detailed explanation](http://www.vnsecurity.net/research/2013/05/21/analysis-of-nginx-cve-2013-2028.html)
-* **Exploit script**: [This Ruby script](https://github.com/OleksiiOleksenko/mpx_evaluation/blob/dev/experiments/exp_nginx_security/CVE-2013-2028.rb)
+* **Exploit script**: [This Ruby script]({{ site.url }}{{ site.baseurl }}/code/CVE-2013-2028.rb)
 
 {% include alert text='**Note**. To exploit the bug, one needs to `apt-get install gem rubygems ruby-dev sqlite3 libsqlite3-dev` and `gem install ronin` in Ubuntu.' %}
 
@@ -170,7 +170,7 @@ Additional statistics[^stats]:
 
 |                        | Native | MPX  | ASan |
 |:-----------------------|-------:|-----:|-----:|
-| Throughput (MBit/s)    | 850    | 595  | 850  |
+| Network utilization (MBit/s)    | 850    | 595  | 850  |
 | CPU utilization (%)    | 300    | 320  | 345  |
 | Instructions/cycle     | 0.85   | 0.7  | 0.92 |
 |----
