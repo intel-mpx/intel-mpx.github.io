@@ -101,7 +101,7 @@ Moreover, [performance overheads are still too high](/performance) for MPX to be
 **Lesson 2: Intel MPX is not production-ready.**
 MPX support is available for GCC and ICC compilers.[^clang]
 At the compiler level, GCC-MPX has [severe performance issues](/performance) whereas ICC-MPX has [a number of compiler bugs](/usability).
-At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus missing bugs such as the [Nginx bug](case-studies/#security-1).
+At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus not detecting bugs such as the [Nginx bug](case-studies/#security-1).
 Finally, at the hardware level, some MPX instructions are [very slow](/microbenchmarks#mpxinstr) and some have [unjustified data dependencies](/performance#ipc).
 
 **Lesson 3: Intel MPX does not support multithreading.**
