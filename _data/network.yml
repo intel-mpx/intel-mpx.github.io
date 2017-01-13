@@ -1,16 +1,16 @@
-- menu_name: "Thanks to"
+#- menu_name: "Thanks to"
 
-- name: "Franz"
+#- name: "Franz"
 #  url: "https://github.com/dimakuv"
 #  class: "network-entypo"
 #  title: "Everyone"
 
-- name: "Sergei"
+#- name: "Sergei"
 #  url: "https://github.com/OleksiiOleksenko"
 #  class: "services-newsletter"
 #  title: "Oleksii Oleksenko"
 
-- name: "Rasha"
+#- name: "Rasha"
 #  url: "https://github.com/OleksiiOleksenko"
 #  class: "services-newsletter"
 #  title: "Oleksii Oleksenko"
