@@ -5,11 +5,20 @@ header: no
 permalink: "/contact/"
 ---
 
-For more information, questions, and comments, please contact [Oleksii Oleksenko][1] or [Dmitrii Kuvaiskii][2].
+For more information, questions, and comments, please contact one of the authors:
 
-For the sources, please visit [our GitHub page][3].
+* [Oleksii Oleksenko][1]
+* [Dmitrii Kuvaiskii][2]
+* [Pramod Bhatotia][3]
+* [Pascal Felber][4]
+* [Christof Fetzer][5]
+
+For the sources, please visit [our GitHub page][6] (access is limited until paper submission).
 
 
-[1]: <oleksii.oleksenko@tu-dresden.de>
-[2]: <dmitrii.kuvaiskii@tu-dresden.de>
-[3]: https://github.com/OleksiiOleksenko/mpx_evaluation/
+[1]: https://tu-dresden.de/ing/informatik/sya/se/die-professur/beschaeftigte/oleksii-oleksenko
+[2]: https://tu-dresden.de/ing/informatik/sya/se/die-professur/beschaeftigte/dmitrii-kuvaiskii
+[3]: http://homepages.inf.ed.ac.uk/pbhatoti/
+[4]: http://members.unine.ch/pascal.felber/index.html
+[5]: https://tu-dresden.de/ing/informatik/sya/se/die-professur/inhaber-in
+[6]: https://github.com/OleksiiOleksenko/mpx_evaluation/

@@ -28,20 +28,42 @@ permalink: /index.html
 homepage: true
 ---
 
-### WORK IN PROGRESS
+# Welcome to [intel-mpx.github.io](https://intel-mpx.github.io)!
 
-{% include alert text='This web-site is still work in progress. Please refrain from mentioning this web-site.' %}
+This web-site contains complete results of the evaluation of Intel Memory Protection Extensions (Intel MPX) on Phoenix, Parsec, and SPEC benchmark suites from three perspectives:
 
-<div id="videoModal" class="reveal-modal large" data-reveal="">
-  <div class="flex-video widescreen vimeo" style="display: block;">
-    <iframe width="1280" height="720" src="https://www.youtube.com/embed/3b5zCFSmVvU" frameborder="0" allowfullscreen></iframe>
-  </div>
-  <a class="close-reveal-modal">&#215;</a>
-</div>
+* **performance** -- performance and memory overheads,
+* **security** -- qualitative and quantitative analysis of bugs/vulnerabilities detected,
+* **usability** -- analysis of production quality and program-specific issues.
 
-## Results Overview {#results}
+### What is Intel MPX?
 
-The summary table with our classification of *MPX security levels*---from lowest L1 to highest L6---highlights the trade-off between __security__ (number of undetected *RIPE bugs* and *Other bugs* in benchmarks), __usability__ (number of programs *Broken* because of the applied approach), and __performance overhead__ (average *Perf* overhead w.r.t. native executions).
+In August 2015, Intel released Memory Protection Extensions (Intel MPX).
+The goal of MPX is to provide an efficient protection against memory errors and attacks.
+Here, by *memory errors*[^temporal] we understand errors that happen when a program reads from or writes to a different memory region than the one intended by the developer, e.g., buffer overflows and out-of-bounds accesses.
+*A memory attack* is a different view on the same problem---a scenario in which an adversary gains access to the region of memory not allowed for use.
+
+Although a few protection mechanisms had already existed before MPX, they were mainly implemented in software and caused significant slowdowns of protected programs.
+MPX adds *hardware assistance* to memory protection and thus improves overall performance.
+
+### What did we do in this work?
+
+To our knowledge, there is no comprehensive evaluation of performance, security, and usability characteristics of MPX, neither from academic community nor from Intel itself.
+Therefore, the goal of this work was to perform an *extensive and unbiased evaluation* of MPX.
+
+To fully explore pros and cons of MPX, we put the results into perspective by comparing with existing software-based memory-safety mechanisms.
+We chose three techniques that showcase main classes of memory safety:
+
+* [Address Sanitizer](http://clang.llvm.org/docs/AddressSanitizer.html) is a _trip-wire_ (aka electric-fence) approach. This class surrounds all objects with regions of marked (poisoned) memory, so that any overflow will change values in this region and will be consequently detected.
+* [SoftBound](https://www.cs.rutgers.edu/~santosh.nagarakatte/softbound/) is a _pointer-based_ approach. Such approaches keep track of pointer bounds (the lowest and the highest allowed address of a pointed-to memory region) and check each memory write and read against them.
+* [SafeCode](http://safecode.cs.illinois.edu/) is an _object-based_ approach. Its main idea is enforcing the intended referent, i.e., making sure that pointer manipulations do not change the pointer's referent object.[^pointervsobject]
+
+In this work, we present results of our experiments and discuss applicability of MPX.
+We also analyze [microarchitectural details of MPX](/design) on a set of [microbenchmarks](/microbenchmarks), as well as differences between two existing implementations of MPX in two major compilers---ICC and GCCX.
+
+### Quick overview of results {#results}
+
+The summary table with our classification of *MPX security levels*---from lowest L1 to highest L6---highlights the trade-off between [__security__](/security) (number of undetected *RIPE bugs* and *Other bugs* in benchmarks), [__usability__](/usability) (number of programs *Broken* because of the applied approach), and [__performance overhead__](/performance) (average *Perf* overhead w.r.t. native executions).
 AddressSanitizer is shown for comparison in the last row.
 SafeCode and SoftBound are *not* shown due to their instability: a large fraction of programs broke under these approaches.
 
@@ -67,16 +89,18 @@ For L6, performance overheads are not shown since too few programs executed corr
 
 ### Lessons Learned {#lessons}
 
+Intel MPX is a promising technology: it provides the strongest possible security guarantees, it instruments most programs transparently and correctly, its ICC incarnation has moderate overheads of 20-50%, it can interoperate with unprotected legacy libraries, and its protection level is easily configurable.
+However, our evaluation indicates that it is not yet mature enough for widespread use.
+
 **Lesson 1: Intel MPX is not a silver bullet.**
-MPX is a promising technology: (1) it provides the strongest possible security guarantees, (2) it instruments most programs transparently and correctly, (3) its ICC incarnation has moderate overheads of 20-50%, (4) it can interoperate with unprotected legacy libraries, and (5) its protection level is easily configurable.
-However, by design [MPX can break programs](/usability) that violate the C standard memory model but are otherwise perfectly functional: some of these programs would require intrusive changes to execute under MPX.
+By design [MPX can break programs](/usability) that violate the C standard memory model but are otherwise perfectly functional: some of these programs would require intrusive changes to execute under MPX.
 Moreover, [performance overheads are still too high](/performance) for MPX to be used in production.
 
 **Lesson 2: Intel MPX is not production-ready.**
-MPX support has been available for around two years for GCC and ICC compilers.[^clang]
-At the hardware level, some MPX instructions are [very slow](/microbenchmarks#mpxinstr) and some have [unjustified data dependencies](/performance#ipc).
+MPX support is available for GCC and ICC compilers.[^clang]
 At the compiler level, GCC-MPX has [severe performance issues](/performance) whereas ICC-MPX has [a number of compiler bugs](/usability).
-At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus missing bugs such as the [Nginx `recv` bug](case-studies/#security-1).
+At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus missing bugs such as the [Nginx bug](case-studies/#security-1).
+Finally, at the hardware level, some MPX instructions are [very slow](/microbenchmarks#mpxinstr) and some have [unjustified data dependencies](/performance#ipc).
 
 **Lesson 3: Intel MPX does not support multithreading.**
 Current incarnation of MPX has no support for multithreaded programs.[^multi]
@@ -90,11 +114,23 @@ For [Apache](/case-studies#apache) and [Nginx](/case-studies#nginx), MPX perform
 For [Memcached](/case-studies#memcached), however, MPX could reach only 50% throughput, performing much worse than AddressSanitizer.
 
 **Lesson 5: AddressSanitizer is currently the best solution for debugging and security.**
-For comparison with MPX, we tried our best to evaluate open-source state-of-the-art techniques for memory safety.[^techniques]
 In our experience, AddressSanitizer is the best choice in terms of performance, usability, and security, even though it provides weaker guarantees than MPX.
 The other two techniques---SoftBound and SafeCode research prototypes---are unstable and cannot compile/run correctly many of the evaluated programs.
 
 
+## Looking for more details?
+
+* Complete description of Intel MPX can be found in **[Design](/design)**.
+* Experimental setup can be found in **[Methodology](/methodology/)**.
+* Isolated measurements of different aspects of Intel MPX are presented in **[Microbenchmarks](/microbenchmarks/)**.
+* The evaluation itself consists of three parts:
+    * **[Performance](/performance/)** page presents various run-time parameters;
+    * **[Security](/security/)** page evaluates security guaranties;
+    * **[Usability](/usability/)** page discusses various issues that appear when the considered protections are applied.
+* Evaluation results on real-world applications are presented in **[Case Studies](/case-studies/)**.
+
+
+[^temporal]: The current version of Intel MPX protects only against "spatial" errors and attacks (described above). There are also "temporal" errors that appear when trying to use an object before it was created or after it was deleted. MPX does not yet provide a protection against temporal errors.
+[^pointervsobject]: In terms of created metadata, trip-wire approaches create "shadow memory" metadata for the whole available program memory, pointer-based approaches create bounds metadata per each pointer, and object-based approaches create bounds metadata per each object.
 [^clang]: Interestingly, there seem to be no plans to port Intel MPX to Clang/LLVM; a discussion (started by us) can be found in the [LLVM mailing list](http://lists.llvm.org/pipermail/llvm-dev/2016-January/094620.html).
 [^multi]: Surprisingly, Phoenix and PARSEC multithreaded programs experienced no MPX-related issues; we believe it was a matter of luck.
-[^techniques]: We intentionally chose three different techniques: AddressSanitizer represents a *trip-wire* approach to memory safety, SafeCode -- *object-based* approach, and SoftBound -- *pointer-based* approach.
