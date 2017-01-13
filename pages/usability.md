@@ -24,14 +24,14 @@ permalink: "/usability/"
 
 ## MPX Usability  {#mpxusability}
 
-The below figure highlights the usability of MPX, i.e., the number of MPX-protected programs that fail to compile correctly and/or need significant code modifications. Note that many programs can be easily fixed; we do not count them as broken. MPX security levels are based on our own classification and correspond to the stricter protection rules, where level 0 means unprotected native version and 6 -- the most secure MPX configuration. In total, our evaluation covers 38 programs from the Phoenix, PARSEC, and SPEC benchmark suites.
+The below figure highlights the usability of MPX, i.e., the number of MPX-protected programs that fail to compile correctly and/or need significant code modifications. Note that many programs can be easily fixed; we do not count them as broken (see the refined table below for details). MPX security levels are based on our own classification and correspond to the stricter protection rules, where level 0 means unprotected native version and 6---the most secure MPX configuration. In total, our evaluation covers 38 programs from the Phoenix, PARSEC, and SPEC benchmark suites.
 
 <img class="t20" width="75%" src="{{ site.urlimg }}usability.jpg" alt="Number of MPX-broken programs">
 
-As can be seen, around 10% of programs break already at the weakest level 1 of MOX protection (without narrowing of bounds and protecting only writes).
+As can be seen, around 10% of programs break already at the weakest level 1 of MPX protection (without narrowing of bounds and protecting only writes).
 At the highest security level 6 (with enabled `BNDPRESERVE`), most of the programs fail.
 
-As for other approaches, no programs broke under AddressSanitizer. For SafeCode, around 70% programs executed correctly (all Phoenix, half of PARSEC, and 3/4 of SPEC).  SoftBound -- being a prototype implementation -- showed poor results, with only simple programs surviving (all Phoenix, one PARSEC, and 6 SPEC). See details below.
+As for other approaches, no programs broke under AddressSanitizer. For SafeCode, around 70% programs executed correctly (all Phoenix, half of PARSEC, and 3/4 of SPEC).  SoftBound---being a prototype implementation---showed poor results, with only simple programs surviving (all Phoenix, one PARSEC, and 6 SPEC). See details below.
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
@@ -52,24 +52,28 @@ Moreover, SoftBound does *not* support multithreading, and any multithreaded pro
 
 **Observation 1**: Both GCC-MPX and ICC-MPX break most programs on Level 6 (with `BNDPRESERVE=1`).
 This is because `BNDPRESERVE` does *not* clear bounds on pointers transferred from/to unprotected legacy libraries.
-This means that any pointer returned or modified by any legacy library (including Standard C library) will almost certainly contain wrong bounds.
+This means that any pointer returned from or modified by any legacy library (including Standard C library) will almost certainly contain wrong bounds.
 Because of this, 89% of GCC-MPX and 76% of ICC-MPX programs break.
 These cases are represented as gray boxes.
+
 * Note that for Phoenix, GCC-MPX fails in most cases while ICC-MPX works correctly. This is because of a slight difference in libc wrappers: all the failing programs use `mmap64` function which is correctly wrapped by ICC-MPX but ignored by GCC-MPX. Thus, in the GCC case, the newly allocated pointer contains no bounds which (under `BNDPRESERVE=1`) is treated as an out-of-bounds violation.
-* One can wonder why some programs *still* work even if interoperability with Standard C library is broken. The reason is that programs like `kmeans`, `pca`, and `lbm` require *literally no* external functions except `malloc()`, `memset()`, and `free()`---which are provided by the wrapper MPX libraries.
+* One can wonder why some programs *still* work even if interoperability with Standard C library is broken. The reason is that programs like `kmeans`, `pca`, and `lbm` require *literally no* external functions except `malloc`, `memset`, `free`, etc.---which are provided by the wrapper MPX libraries.
 
 **Observation 2**: Some programs break due to *memory model violation*.
-* `ferret` and `raytrace` both have structs with the first field used to access other fields in the struct (a common practice that is actually disallowed by the C standard). ICC-MPX disallows this behavior whenever bounds narrowing is enabled. GCC-MPX allows such behavior by default and has a special switch to tighten it (`-fno-chkp-first-field-has-own-bounds`) which we classify as Level 5.
+
+* `ferret` and `raytrace` both have structs with the first field used to access other fields in the struct (a common practice that is actually disallowed by the C standard). ICC-MPX disallows this behavior when bounds narrowing is enabled. GCC-MPX allows such behavior by default and has a special switch to tighten it (`-fno-chkp-first-field-has-own-bounds`) which we classify as Level 5.
 * `gcc` has its own complex memory model with bit-twiddling, type-casting, and other practices deprecated by the C standard. This is why both GCC-MPX and ICC-MPX break as soon as bounds narrowing is enabled.
-* `soplex` literally modifies pointers-to-object from one address to another, without any respect towards pointer bounds (which is associated with another memory region). No version of MPX could circumvent this violation of the C standard. (The same happens in `mcf` but only in one corner-case on test input.)
+* `soplex` manually modifies pointers-to-object from one address to another using pointer arithmetic, without any respect towards pointer bounds. By design, MPX cannot circumvent this violation of the C standard. (The same happens in `mcf` but only in one corner-case on test input.)
 * `xalancbmk` performs a container-style subtraction from the base of a struct. This leads to GCC-MPX and ICC-MPX breaking when bounds narrowing is enabled.
 * We also manually fixed some memory-model violations, e.g., flexible arrays with size 1 (`arr[1]`). These fixes are represented as yellow background.
 
 **Observation 3**: In some cases, real bugs were detected (see also [security](/security#others)).
-* Three bugs in `ferret`, `h264ref`, and `perlbench` were detected and fixed by us. These bugs are represented as blue background.
-* Three bugs in `x264`, `h264ref`, and `perlbench` were detected *only* by GCC-MPX versions. These bugs are represented as red boxes. Note that ICC-MPX missed bugs in `h264ref` and `perlbench`. Upon debugging, we noticed that ICC-MPX narrowed bounds less strictly than GCC-MPX and thus missed the bugs. We were not able to deduce the root cause, but presume it is due to the different memory layout generated by GCC and ICC compilers.
 
-**Observation 4**: In rear cases, we hit compiler bugs in GCC and ICC. All these bugs were reported to the maintainers of these compilers.
+* Three bugs in `ferret`, `h264ref`, and `perlbench` were detected and fixed by us. These fixes are represented as blue background.
+* Three bugs in `x264`, `h264ref`, and `perlbench` were detected *only* by GCC-MPX versions. These bugs are represented as red boxes. Note that ICC-MPX missed bugs in `h264ref` and `perlbench`. Upon debugging, we noticed that ICC-MPX narrowed bounds less strictly than GCC-MPX and thus missed the bugs. We were not able to hunt out the root cause, but presume it is due to different memory layouts generated by GCC and ICC compilers.
+
+**Observation 4**: In rear cases, we hit compiler bugs in GCC and ICC.
+
 * GCC-MPX had only one bug, an obscure "fatal internal GCC compiler error" on only-write versions of `xalancbmk`.
 * ICC-MPX has an [autovectorization bug](https://software.intel.com/en-us/forums/intel-c-compiler/topic/700675) triggered on some versions of `vips`, `gobmk`, `h264ref`, and `milc`.
 * ICC-MPX has a ["wrong-bounds through indirect call" bug](https://software.intel.com/en-us/forums/intel-c-compiler/topic/700550) triggered on some versions of `x264` and `xalancbmk`.
