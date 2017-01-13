@@ -28,7 +28,7 @@ permalink: /index.html
 homepage: true
 ---
 
-# Welcome to [intel-mpx.github.io](https://intel-mpx.github.io)!
+# Intel MPX Explained
 
 This web-site contains complete results of the evaluation of Intel Memory Protection Extensions (Intel MPX) on Phoenix, Parsec, and SPEC benchmark suites from three perspectives:
 
