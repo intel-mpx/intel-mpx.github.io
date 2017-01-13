@@ -30,7 +30,7 @@ homepage: true
 
 # Intel MPX Explained
 
-This web-site contains complete results of the evaluation of Intel Memory Protection Extensions (Intel MPX) on Phoenix, Parsec, and SPEC benchmark suites from three perspectives:
+This web-site contains complete results of the evaluation of Intel Memory Protection Extensions (Intel MPX) on Phoenix, PARSEC, and SPEC benchmark suites from three perspectives:
 
 * **performance** -- performance and memory overheads,
 * **security** -- qualitative and quantitative analysis of bugs/vulnerabilities detected,

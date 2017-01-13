@@ -43,7 +43,7 @@ We start with the single most important parameter: runtime overhead of each appr
 <div class="medium-12 medium-pull-12 columns" markdown="1">
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_perf.jpg" alt="Performance overheads of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_perf.jpg" alt="Performance overheads of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_perf.jpg" alt="Performance overheads of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_perf.jpg" alt="Performance overheads of SPEC">
 
 {% include alert text='**`lbm` and `namd` under AddressSanitizer**. These two SPEC benchmarks perform suspiciously fast under AddressSanitizer (better than native versions). We examined the assembly and made sure that this was not a bug in our experiments, but rather an artifact of AddressSanitizer compiler pass. In a nutshell, AddressSanitizer compiles `lbm` to a better-ordered sequence of SSE instructions and `namd`---to a better memory layout.' %}
@@ -55,7 +55,7 @@ At the same time, ICC is less usable: only *30 programs out of total 38* (79%) b
 This unexpected result testifies that the HW-assisted performance improvements of MPX are offset by its complicated design.
 At the same time, AddressSanitizer provides *worse* security guarantees than MPX; see [security](/security) page for details.
 
-**Observation 3**: SafeCode and SoftBound show good results on Phoenix programs, but perform much worse---both in terms of *performance* and *usability*---on Parsec and SPEC.
+**Observation 3**: SafeCode and SoftBound show good results on Phoenix programs, but perform much worse---both in terms of *performance* and *usability*---on PARSEC and SPEC.
 First, consider SafeCode on Phoenix: due to the almost-pointerless design and simplicity of Phoenix programs, SafeCode achieves a low overhead of 5%.
 However, SafeCode could run only *18 programs out of 31* (58%) on PARSEC and SPEC and exhibited the highest overall overheads.
 SoftBound executed only *7 programs* on PARSEC and SPEC (23%).
@@ -67,7 +67,7 @@ In most cases, performance overheads are dominated by a single factor: **the inc
 It can be seen if we compare the performance overheads in the previous figure and the instruction overheads below; there is a strong correlation between the figures.
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_instr.jpg" alt="Instruction overheads of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_instr.jpg" alt="Instruction overheads of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_instr.jpg" alt="Instruction overheads of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_instr.jpg" alt="Instruction overheads of SPEC">
 
 **Observation 1**: Instruction overhead does not directly correspond to the performance overhead.
@@ -84,7 +84,7 @@ For example, the theoretical IPC (instructions/cycle) of our machine is ~5, but 
 Thus, memory-safety techniques benefit from underutilized CPU and partially mask their performance overhead.
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_ipc.jpg" alt="IPC of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_ipc.jpg" alt="IPC of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_ipc.jpg" alt="IPC of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_ipc.jpg" alt="IPC of SPEC">
 
 **Observation 1**: MPX does not increase IPC.
@@ -105,7 +105,7 @@ In these cases, memory-safety techniques can partially hide their performance ov
 {% include alert text='**Note**. The sum of bars (the complete stack) for each program and each version represents the total number of memory accesses performed by the program. For example, native GCC execution of `histogram` performs 80% accesses in total, and its AddressSanitizer version---35% (normalized to the total number of executed instructions).' %}
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_cache.jpg" alt="Cache behavior of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_cache.jpg" alt="Cache behavior of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_cache.jpg" alt="Cache behavior of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_cache.jpg" alt="Cache behavior of SPEC">
 
 **Observation 1**: Most programs have good cache locality such that most memory accesses ended up in the L1 cache.
@@ -131,7 +131,7 @@ To prove it, we measured the shares of MPX instructions in the total number of i
 {% include alert text='**Note on methodology**. An observant reader may notice that the plots contain numbers even for those programs marked as broken in other figures. This is because we disabled MPX error handling while gathering these statistics. The only exceptions are `vips` and `x264` under ICC: our Intel Pin tool experienced an internal error on these programs.' %}
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mpxcount.jpg" alt="MPX instructions of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpxcount.jpg" alt="MPX instructions of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpxcount.jpg" alt="MPX instructions of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_mpxcount.jpg" alt="MPX instructions of SPEC">
 
 **Observation 1**: As expected, a lion share of all MPX instructions are bounds-checking `bndcl` and `bndcu`.
@@ -157,7 +157,7 @@ In some scenarios, memory overheads (more specifically, resident set size overhe
 Thus, memory overhead measurements are presented next.
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mem.jpg" alt="Memory consumption overheads of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mem.jpg"  alt="Memory consumption overheads of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mem.jpg"  alt="Memory consumption overheads of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_mem.jpg"    alt="Memory consumption overheads of SPEC">
 
 **Observation 1**: On average, MPX has a 2.1X memory overhead under ICC version and 1.9X under GCC.
@@ -186,7 +186,7 @@ Thus, it trades security guarantees for better performance.
 ### Performance
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mpx_feature_perf.jpg" alt="Performance overheads of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpx_feature_perf.jpg" alt="Performance overheads of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpx_feature_perf.jpg" alt="Performance overheads of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_mpx_feature_perf.jpg" alt="Performance overheads of SPEC">
 
 **Observation 1**: Bounds narrowing has a negligible impact on performance because it does not change the number of checks.
@@ -195,7 +195,7 @@ On the contrary, only-writes protection instruments less code and leads to lower
 ### Memory consumption
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_mpx_feature_mem.jpg" alt="Memory consumption overheads of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpx_feature_mem.jpg"  alt="Memory consumption overheads of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_mpx_feature_mem.jpg"  alt="Memory consumption overheads of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_mpx_feature_mem.jpg"    alt="Memory consumption overheads of SPEC">
 
 **Observation 1**: Both bounds narrowing and only-writes protection seem to have no effect on memory consumption.
@@ -203,7 +203,7 @@ On the contrary, only-writes protection instruments less code and leads to lower
 ## Multithreading
 
 To evaluate the influence of multithreading, we measured and compared execution times of all benchmarks on 2 and 8 threads.
-The approach for enabling multithreading was different for different benchmark suites: for Phoenix it was enough to set a corresponding compilation flag; Parsec required an alternative version of the source code (supplied with the suite).
+The approach for enabling multithreading was different for different benchmark suites: for Phoenix it was enough to set a corresponding compilation flag; PARSEC required an alternative version of the source code (supplied with the suite).
 SPEC does not have a multithreaded version at all.
 Moreover, both SoftBound and SafeCode are not stable in multithreaded environments and therefore were excluded from measurements.
 
@@ -211,7 +211,7 @@ Moreover, both SoftBound and SafeCode are not stable in multithreaded environmen
 
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_multi.jpg" alt="Multithreading (Phoenix)">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_multi.jpg"  alt="Multithreading (Parsec)">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_multi.jpg"  alt="Multithreading (PARSEC)">
 
 **Observation 1**: As expected, the difference between native executions and our techniques is minimal.
 For MPX, it is caused by the absence of multithreading support, i.e., no additional code is executed in multithreaded versions.
@@ -245,7 +245,7 @@ The results are presented in the next two sections.
 ### Performance
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_var_input_perf.jpg" alt="Varying inputs - performance (Phoenix)">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_var_input_perf.jpg"  alt="Varying inputs - performance (Parsec)">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_var_input_perf.jpg"  alt="Varying inputs - performance (PARSEC)">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_var_input_perf.jpg"    alt="Varying inputs - performance (SPEC)">
 
 Generally, the input size has very little impact on performance overhead of any of the considered approaches, although there are some peculiar cases.
@@ -262,7 +262,7 @@ The same goes for `libquantum`.
 ### Memory consumption
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_var_input_mem.jpg" alt="Varying inputs - memory (Phoenix)">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_var_input_mem.jpg"  alt="Varying inputs - memory (Parsec)">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_var_input_mem.jpg"  alt="Varying inputs - memory (PARSEC)">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_var_input_mem.jpg"    alt="Varying inputs - memory (SPEC)">
 
 In contrast to performance which stays roughly the same with bigger inputs, the memory overheads tend to reduce when input size increases.
@@ -292,7 +292,7 @@ The numbers prove: the higher the portion of memory accesses in the native versi
 E.g., the correlation between the percentage of memory accesses, the number of instructions, and the runtime overhead is clearly seen for *histogram* and *string_match on ICC*.
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_native_mem_access.jpg" alt="Native memory accesses of Phoenix">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_native_mem_access.jpg" alt="Native memory accesses of Parsec">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_native_mem_access.jpg" alt="Native memory accesses of PARSEC">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_native_mem_access.jpg" alt="Native memory accesses of SPEC">
 
 {% include alert text='**Note on string_match**. The 40%-memory-accesses spike on ICC---in comparison to 10% on GCC and Clang---accentuates the sometimes dramatic differences in compilers. Upon examining the assembly, we verified that this spike comes from the SSE2-heavy code; such code was generated only by ICC. (The 40% number is constituted mostly by the SSE2-stores to the `bzero`ed space.) This autovectorization optimization, despite increasing the number of memory accesses, provided a 30% better execution time than GCC.' %}
@@ -303,5 +303,5 @@ E.g., the correlation between the percentage of memory accesses, the number of i
 We found these results uninteresting but report them here for completeness.
 
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_misc_stat.jpg" alt="Branches and TLB (Phoenix)">
-<img class="t20" width="100%" src="{{ site.urlimg }}parsec_misc_stat.jpg"  alt="Branches and TLB (Parsec)">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_misc_stat.jpg"  alt="Branches and TLB (PARSEC)">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_misc_stat.jpg"    alt="Branches and TLB (SPEC)">

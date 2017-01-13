@@ -114,10 +114,10 @@ Not to introduce additional measurement error, we measured these parameters in p
 
 ## Benchmarks
 
-We used three benchmark suits in our evaluation: [Parsec 3.0](http://parsec.cs.princeton.edu/), [Phoenix 2.0](https://github.com/kozyraki/phoenix/tree/master/sample_apps) and [SPEC CPU 2006](https://www.spec.org/cpu2006/).
+We used three benchmark suits in our evaluation: [PARSEC 3.0](http://parsec.cs.princeton.edu/), [Phoenix 2.0](https://github.com/kozyraki/phoenix/tree/master/sample_apps) and [SPEC CPU 2006](https://www.spec.org/cpu2006/).
 During our work, we found and [fixed a set of bugs in them ](/usability#usabilitytable).
 
-All the benchmarks were compiled together with the libraries they depend upon (except `raytrace` from Parsec which requires X11 libraries).
+All the benchmarks were compiled together with the libraries they depend upon (except `raytrace` from PARSEC which requires X11 libraries).
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
@@ -280,7 +280,7 @@ Values of coefficient of variation (CV) are presented in the following table:
 | Experiment            | Average CV, % | Maximum CV, % |
 |:----------------------|--------------:|--------------:|
 | Phoenix               | 0.34          | 3.87          |
-| Parsec                | 0.28          | 3.75          |
+| PARSEC                | 0.28          | 3.75          |
 | SPEC                  | 0.41          | 3.96          |
 | **All**               | **0.35**      | **3.96**      |
 

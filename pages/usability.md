@@ -47,7 +47,7 @@ AddressSanitizer has no usability issues---by design it makes no assumptions on 
 Also, it is the most stable tested product, fixed and updated with each new version of GCC and Clang.
 
 On the contrary, SoftBound and SafeCode are research prototypes.
-They work perfectly with very simple programs from Phoenix, but are not able to compile/run correctly the more complicated benchmarks from Parsec and SPEC.
+They work perfectly with very simple programs from Phoenix, but are not able to compile/run correctly the more complicated benchmarks from PARSEC and SPEC.
 Moreover, SoftBound does *not* support multithreading, and any multithreaded program immediately fails under it.
 
 **Observation 1**: Both GCC-MPX and ICC-MPX break most programs on Level 6 (with `BNDPRESERVE=1`).
