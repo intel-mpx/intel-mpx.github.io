@@ -52,12 +52,12 @@ Moreover, SoftBound does *not* support multithreading, and any multithreaded pro
 
 **Observation 1**: Both GCC-MPX and ICC-MPX break most programs on Level 6 (with `BNDPRESERVE=1`).
 This is because `BNDPRESERVE` does *not* clear bounds on pointers transferred from/to unprotected legacy libraries.
-This means that any pointer returned from or modified by any legacy library (including Standard C library) will almost certainly contain wrong bounds.
+This means that any pointer returned from or modified by any legacy library (including C standard library) will almost certainly contain wrong bounds.
 Because of this, 89% of GCC-MPX and 76% of ICC-MPX programs break.
 These cases are represented as gray boxes.
 
 * Note that for Phoenix, GCC-MPX fails in most cases while ICC-MPX works correctly. This is because of a slight difference in libc wrappers: all the failing programs use `mmap64` function which is correctly wrapped by ICC-MPX but ignored by GCC-MPX. Thus, in the GCC case, the newly allocated pointer contains no bounds which (under `BNDPRESERVE=1`) is treated as an out-of-bounds violation.
-* One can wonder why some programs *still* work even if interoperability with Standard C library is broken. The reason is that programs like `kmeans`, `pca`, and `lbm` require *literally no* external functions except `malloc`, `memset`, `free`, etc.---which are provided by the wrapper MPX libraries.
+* One can wonder why some programs *still* work even if interoperability with C standard library is broken. The reason is that programs like `kmeans`, `pca`, and `lbm` require *literally no* external functions except `malloc`, `memset`, `free`, etc.---which are provided by the wrapper MPX libraries.
 
 **Observation 2**: Some programs break due to *memory model violation*.
 
