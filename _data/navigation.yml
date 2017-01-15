@@ -2,12 +2,12 @@
   url: "/"
   side: left
 
-- title: "Methodology"
-  url: "/methodology/"
-  side: left
-
 - title: "MPX Design"
   url: "/design/"
+  side: left
+
+- title: "Methodology"
+  url: "/methodology/"
   side: left
 
 - title: "Microbenchmarks"
