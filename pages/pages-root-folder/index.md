@@ -115,10 +115,11 @@ We tested Intel MPX on three real-world case-studies: Apache, Nginx, and Memcach
 For [Apache](/case-studies#apache) and [Nginx](/case-studies#nginx), MPX performed well and on par with AddressSanitizer, achieving 85-95% of native throughput.
 For [Memcached](/case-studies#memcached), however, MPX could reach only 50% throughput, performing much worse than AddressSanitizer.
 
-**Lesson 5: AddressSanitizer is currently the optimal solution.**
-In our experience, AddressSanitizer is the best choice in terms of performance and usability, even though it provides weaker security guarantees than MPX.
-The other two techniques---SoftBound and SafeCode research prototypes---are unstable and cannot compile/run correctly many of the evaluated programs.
-
+**Lesson 5: AddressSanitizer is currently the only production-ready option.**
+Even though AddressSanitizer provides weaker security guarantees than the other techniques, its current implementation is better in terms of performance and usability. 
+SoftBound and SafeCode are research prototypes and they have issues that restrict their usage in real-world applications (although SoftBound provides higher level of security). 
+Both implementations of MPX do not support C to the full extent, which causes a significant number of false positives in some applications.
+GCC implementation is less susceptible to them, but it comes at a cost of worse performance.
 
 ## Looking for more details?
 
