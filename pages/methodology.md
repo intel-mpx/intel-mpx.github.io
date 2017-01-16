@@ -73,6 +73,8 @@ For experiments on [case studies](/case-studies), we used two machines with the 
 --enable-optimized --disable-bindings
 ```
 
+{% include alert text='Note that SoftBound provides spatial *and* temporal protection (MPX provides *only spatial* protection). This is the default behavior, controlled by a special macro flag. [We could not change this flag to provide only spatial support](https://github.com/santoshn/softboundcets-3.8.0/issues/4#issuecomment-226493154) (the question concerns version 3.8.0 but applies to 3.4.0).' %}
+
 * Clang/LLVM (SafeCode):
     * [Source](http://safecode.cs.illinois.edu/downloads.html)
     * Version: 3.2.0
@@ -235,6 +237,9 @@ Compiler flags:
 ```
 -fsoftboundcets -flto -fno-vectorize
 ```
+
+{% include alert text='As mentioned in the [SoftBound GitHub repo](https://github.com/santoshn/softboundcets-34), "LLVM/clang-3.4 introduces vectorization instructions [...], SoftBoundCETS still does not handle these instructions. If you see false violations, use -fno-vectorize in your flags to avoid memory safety violations".' %}
+
 
 Linker flags:
 

@@ -110,15 +110,20 @@ Current incarnation of MPX has no support for multithreaded programs.[^multi]
 Until this issue is fixed---either at the SW or at the HW level---MPX cannot be considered safe in multithreaded environments.
 Unfortunately, we do not see a simple fix to this problem that would *not* affect performance adversely.
 
-**Lesson 4: Intel MPX has varying performance on real-world server applications.**
+**Lesson 4: Intel MPX provides no temporal protection.**
+Current design of MPX protects only against spatial (out-of-bounds accesses) but not temporal (dangling pointers) errors.
+All other tested approaches---AddressSanitizer, SoftBound, and SafeCode---guarantee some form of temporal safety.
+We believe MPX can be enhanced for temporal safety without harming performance, similar to SoftBound[^cets].
+
+**Lesson 5: Intel MPX has varying performance on real-world server applications.**
 We tested Intel MPX on three real-world case-studies: Apache, Nginx, and Memcached.
 For [Apache](/case-studies#apache) and [Nginx](/case-studies#nginx), MPX performed well and on par with AddressSanitizer, achieving 85-95% of native throughput.
 For [Memcached](/case-studies#memcached), however, MPX could reach only 50% throughput, performing much worse than AddressSanitizer.
 
-**Lesson 5: AddressSanitizer is currently the only production-ready option.**
-Even though AddressSanitizer provides weaker security guarantees than the other techniques, its current implementation is better in terms of performance and usability. 
-SoftBound and SafeCode are research prototypes and they have issues that restrict their usage in real-world applications (although SoftBound provides higher level of security). 
-Both implementations of MPX do not support C to the full extent, which causes a significant number of false positives in some applications.
+**Lesson 6: AddressSanitizer is currently the only production-ready option.**
+Even though AddressSanitizer provides weaker security guarantees than the other techniques, its current implementation is better in terms of performance and usability.
+SoftBound and SafeCode are research prototypes and they have issues that restrict their usage in real-world applications (although SoftBound provides higher level of security).
+Both implementations of MPX do not support C programming idioms to the full extent, which causes a significant number of false positives in complex programs.
 GCC implementation is less susceptible to them, but it comes at a cost of worse performance.
 
 ## Looking for more details?
@@ -137,3 +142,4 @@ GCC implementation is less susceptible to them, but it comes at a cost of worse 
 [^pointervsobject]: In terms of created metadata, trip-wire approaches create "shadow memory" metadata for the whole available program memory, pointer-based approaches create bounds metadata per each pointer, and object-based approaches create bounds metadata per each object.
 [^clang]: Interestingly, there seem to be no plans to port Intel MPX to Clang/LLVM; a discussion (started by us) can be found in the [LLVM mailing list](http://lists.llvm.org/pipermail/llvm-dev/2016-January/094620.html).
 [^multi]: Surprisingly, Phoenix and PARSEC multithreaded programs experienced no MPX-related issues; we believe it was a matter of luck.
+[^cets]: The SoftBound prototype we tested is based on the CETS+SoftBound version described in the paper ["CETS: Compiler-Enforced Temporal Safety for C" by Nagarakatte et al.](http://dl.acm.org/citation.cfm?id=1806657). CETS is the extension that adds protection against temporal errors.
