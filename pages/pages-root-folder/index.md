@@ -61,7 +61,7 @@ We chose three techniques that showcase main classes of memory safety:
 * [SafeCode](http://safecode.cs.illinois.edu/) is an _object-based_ approach. Its main idea is enforcing the intended referent, i.e., making sure that pointer manipulations do not change the pointer's referent object.[^pointervsobject]
 
 In this work, we present results of our experiments and discuss applicability of MPX.
-We also analyze [microarchitectural details of MPX](/design) on a set of [microbenchmarks](/microbenchmarks), as well as differences between two existing implementations of MPX in two major compilers---ICC and GCCX.
+We also analyze [microarchitectural details of MPX](/design) on a set of [microbenchmarks](/microbenchmarks), as well as differences between two existing implementations of MPX in two major compilers---ICC and GCC.
 
 ### Quick overview of results {#results}
 
