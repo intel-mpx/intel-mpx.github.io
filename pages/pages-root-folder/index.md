@@ -56,7 +56,7 @@ Therefore, the goal of this work was to perform an *extensive and unbiased evalu
 To fully explore pros and cons of MPX, we put the results into perspective by comparing with existing software-based memory-safety mechanisms.
 We chose three techniques that showcase main classes of memory safety:
 
-* [Address Sanitizer](http://clang.llvm.org/docs/AddressSanitizer.html) is a _trip-wire_ (aka electric-fence) approach. This class surrounds all objects with regions of marked (poisoned) memory, so that any overflow will change values in this region and will be consequently detected.
+* [AddressSanitizer](http://clang.llvm.org/docs/AddressSanitizer.html) is a _trip-wire_ (aka electric-fence) approach. This class surrounds all objects with regions of marked (poisoned) memory, so that any overflow will change values in this region and will be consequently detected.
 * [SoftBound](https://www.cs.rutgers.edu/~santosh.nagarakatte/softbound/) is a _pointer-based_ approach. Such approaches keep track of pointer bounds (the lowest and the highest allowed address of a pointed-to memory region) and check each memory write and read against them.
 * [SafeCode](http://safecode.cs.illinois.edu/) is an _object-based_ approach. Its main idea is enforcing the intended referent, i.e., making sure that pointer manipulations do not change the pointer's referent object.[^pointervsobject]
 
