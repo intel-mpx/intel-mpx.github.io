@@ -91,18 +91,22 @@ For L6, performance overheads are not shown since too few programs executed corr
 
 ### Lessons Learned {#lessons}
 
-Intel MPX is a promising technology: it provides the strongest possible security guarantees, it instruments most programs transparently and correctly, its ICC incarnation has moderate overheads of 20-50%, it can interoperate with unprotected legacy libraries, and its protection level is easily configurable.
-However, our evaluation indicates that it is not yet mature enough for widespread use.
+Intel MPX is a promising technology: it provides the strongest possible security guarantees against spatial errors, it instruments most programs transparently and correctly, its ICC incarnation has moderate overheads of 20-50%, it can interoperate with unprotected legacy libraries, and its protection level is easily configurable.
+However, our evaluation indicates that it is not yet mature enough for widespread use because of the following issues:
 
-**Lesson 1: Intel MPX is not a silver bullet.**
-By design [MPX can break programs](/usability) that violate the C standard memory model but are otherwise perfectly functional: some of these programs would require intrusive changes to execute under MPX.
-Moreover, [performance overheads are still too high](/performance) for MPX to be used in production.
-
-**Lesson 2: Intel MPX is not production-ready.**
+**Lesson 1: The compiler support is not mature enough.**
 MPX support is available for GCC and ICC compilers.[^clang]
 At the compiler level, GCC-MPX has [severe performance issues](/performance) whereas ICC-MPX has [a number of compiler bugs](/usability).
 At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus not detecting bugs such as the [Nginx bug](case-studies/#security-1).
-Finally, at the hardware level, some MPX instructions are [very slow](/microbenchmarks#mpxinstr) and some have [unjustified data dependencies](/performance#ipc).
+However, we believe that all these issues will be fixed in the future versions of the compilers.
+
+**Lesson 2: The new instructions are not as fast as expected.**
+There are two performance issues with MPX instructions:
+* Spilling bounds registers into memory often involves costly two-level address translation, which can contribute a significant share to the overhead.
+We, however, do not know any viable solution to this problem.
+* As our [experiments show](/performance#ipc), current Skylake processors perform bounds checking sequentially, i.e., bounds are not checked in parallel with the corresponding memory access.
+If this data dependency did not exist, MPX would be able to use instruction parallelism to a higher extent and the overheads would be lower.
+Fixing this issue would require changes in the next generations of processors. 
 
 **Lesson 3: Intel MPX does not support multithreading.**
 Current incarnation of MPX has no support for multithreaded programs.[^multi]
@@ -113,15 +117,10 @@ Unfortunately, we do not see a simple fix to this problem that would *not* affec
 **Lesson 4: Intel MPX provides no temporal protection.**
 Current design of MPX protects only against spatial (out-of-bounds accesses) but not temporal (dangling pointers) errors.
 All other tested approaches---AddressSanitizer, SoftBound, and SafeCode---guarantee some form of temporal safety.
-We believe MPX can be enhanced for temporal safety without harming performance, similar to SoftBound[^cets].
+We believe MPX can be enhanced for temporal safety without harming performance, similar to SoftBound.
 
-**Lesson 5: Intel MPX has varying performance on real-world server applications.**
-We tested Intel MPX on three real-world case-studies: Apache, Nginx, and Memcached.
-For [Apache](/case-studies#apache) and [Nginx](/case-studies#nginx), MPX performed well and on par with AddressSanitizer, achieving 85-95% of native throughput.
-For [Memcached](/case-studies#memcached), however, MPX could reach only 50% throughput, performing much worse than AddressSanitizer.
-
-**Lesson 6: AddressSanitizer is currently the only production-ready option.**
-Even though AddressSanitizer provides weaker security guarantees than the other techniques, its current implementation is better in terms of performance and usability.
+**In conclusion**, we can say that MPX has a potential for becoming the memory protection tool of choice, but currently, AddressSanitizer is the only production-ready option.
+Even though it provides weaker security guarantees than the other techniques, its current implementation is better in terms of performance and usability.
 SoftBound and SafeCode are research prototypes and they have issues that restrict their usage in real-world applications (although SoftBound provides higher level of security).
 Both implementations of MPX do not support C programming idioms to the full extent, which causes a significant number of false positives in complex programs.
 GCC implementation is less susceptible to them, but it comes at a cost of worse performance.
