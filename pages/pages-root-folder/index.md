@@ -102,6 +102,7 @@ However, we believe that all these issues will be fixed in the future versions o
 
 **Lesson 2: The new instructions are not as fast as expected.**
 There are two performance issues with MPX instructions:
+
 * Spilling bounds registers into memory often involves costly two-level address translation, which can contribute a significant share to the overhead.
 We, however, do not know any viable solution to this problem.
 * As our [experiments show](/performance#ipc), current Skylake processors perform bounds checking sequentially, i.e., bounds are not checked in parallel with the corresponding memory access.
