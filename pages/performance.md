@@ -88,9 +88,8 @@ Thus, memory-safety techniques benefit from underutilized CPU and partially mask
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_ipc.jpg" alt="IPC of SPEC">
 
 **Observation 1**: MPX does not increase IPC.
-We do not have an empirical proof (yet), but our suspicion is that bounds checking instructions (`bndcl`, `bndcu`, and `bndcn`) are considered by the processor as a data dependency to subsequent memory accesses.
-If it is true, it significantly hinders performance of MPX.
-Moreover, it might be the main reason for such high overheads.
+[Our microbenchmarks](/microbenchmarks/#mpxchecks) indicate that this is caused by contention of MPX bounds-checking instructions on one execution port (P1).
+If more ports would be available, MPX would be able to use instruction parallelism to a higher extent and the overheads would be lower.
 
 **Observation 2**: Software-only approaches---especially AddressSanitizer and SoftBound---significantly increase IPC, partially hiding performance overheads.
 

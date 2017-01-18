@@ -32,25 +32,109 @@ Our scripts can be [downloaded here]({{ site.url }}{{ site.baseurl }}/code/asm_m
 In our extension, we wrote a loop with 1,000 copies of an instruction under test and run the loop 100 times. This gives us 100,000 executions in total. We run each experiment 10 times to make sure the results were not influenced by external factors.
 For each run, we initialize all BND registers with dummy values to avoid interrupts caused by failed bound checks.
 
-| Instruction            | Latency | Throughput |   | P0 | P1 | P2 | P3 | P4 | P5 | P6 | P7 |
-|:-----------------------|--------:|-----------:|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| `bndmk b, m`           | 2       | 2          |   | 1  | 1  |    |    |    | 1  | 1  |    |
-| `bndcl b, m`           | 3       | 1          |   | 2  | 1  |    |    |    |    | 2  |    |
-| `bndcl b, r`           | 1       | 2          |   |    | 1  |    |    |    |    | 1  |    |
-| `bndcu b, m`           | 3       | 1          |   | 2  | 1  |    |    |    |    | 2  |    |
-| `bndcu b, r`           | 1       | 2          |   |    | 1  |    |    |    |    | 1  |    |
-| `bndmov b, m`          | 3       | 1          |   | 1  | 1  |    | 1  |    |    |    |    |
-| `bndmov b, b`          | 1       | 2          |   | 1  | 1  |    |    |    | 1  | 1  |    |
-| `bndmov m, b`          | 10      | 1/2        |   |    | 2  | 3  | 3  | 1  |    |    | 3  |
-| `bndldx b, m`          | 12      | 1/2        |   | 2  | 2  | 1  | 1  |    | 1  | 1  |    |
-| `bndstx m, b`          | 18      | 1/3        |   |    | 3  | 2  | 2  | 1  |    |    | 3  |
+| Instruction            | &mu;ops | Tput | Lat     |   | P0 | P1 | P2 | P3 | P4 | P5 | P6 | P7 |
+|:-----------------------|--------:|-----:|--------:|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `bndmk b, m`*          | 2       | 2    | 1       |   | 1  | 1  |    |    |    | 1  | 1  |    |
+| `bndcl b, m`*          | 2       | 1    | 1       |   | 0.5| 1  |    |    |    |    | 0.5|    |
+| `bndcl b, r`           | 1       | 2    | 1       |   | 1  |    |    |    |    |    | 1  |    |
+| `bndcu b, m`*          | 2       | 1    | 1       |   | 0.5| 1  |    |    |    |    | 0.5|    |
+| `bndcu b, r`           | 1       | 2    | 1       |   | 1  |    |    |    |    |    | 1  |    |
+| `bndmov b, m`          | 3       | 1    | 1       |   |    | 1  | 1  | 1  |    |    |    |    |
+| `bndmov b, b`          | 2       | 2    | 1       |   | 1  | 1  |    |    |    | 1  | 1  |    |
+| `bndmov m, b`          | 5       | 0.5  | 2       |   |    | 0.5| 0.3| 0.3| 1  |    |    | 0.3|
+| `bndldx b, m`          | 8       | 0.4  | 4-6     |   | 0.4| 0.5| 0.9| 0.9|    | 0.3| 0.4|    |
+| `bndstx m, b`          | 8       | 0.3  | 4-6     |   |    | 0.3| 0.5| 0.5| 1  |    |    | 0.4|
+
+<sup>
+\* Here `m` means LEA-like address calculation and not memory access!
+</sup>
 
 {% include alert text='**Note 1**: `bndcu` has a one’s complement version `bndcn`, we skip it for clarity.' %}
 
-{% include alert text='**Note 2**: Ideally, we would measure throughput for the *parallel case* and latency for the *serial one*. The later case is noise-free, but we were not able to create the data dependency for most of the MPX instructions. Therefore, we resorted to estimating this metric as: *Latency = Number of ports / Throughput*.' %}
+{% include alert text='**Note 2**: Ideally, we would measure latency for the *serial case*. However, we were not able to create a data dependency for MPX instructions. Therefore, we resorted to estimating latency based on our microbenchmarks and Intel documentation (i.e., it is our educated guess).' %}
 
-As expected, most operations have latencies of 1-2 cycles, e.g., `bndcl` and `bndcu` in registers have a minimal latency of one cycle.
+{% include alert text='**Note 3**: For our Skylake, ports P0, P1, P5, and P6 are arithmetic/logic units, P2 and P3 are load and address-generation units, P4 is a store unit, and P7 is load/store address-generation unit.' %}
+
+Let us look at `bndmk b, m` first.
+The instruction creates bounds based on the `m` second operand and puts them in a `b` bounds register (note that `m` in this case is not an actual memory access, but a LEA-like expression).
+Each `bndmk` instruction is split into two micro-operations (&mu;ops).
+In one cycle, two `bndmk`s can be executed in parallel, i.e., throughput is 2.
+This also implies there are four &mu;ops per cycle: two &mu;ops of one `bndmk` are executed in parallel on P0 and P1, and two other &mu;ops of another `bndmk`---on P5 and P6.
+The ports' columns show their utilization; in this case, P0, P1, P5, and P6 are 100% utilized.
+Note how P2-P4---ports to access memory---are not used by this instruction.
+Finally, the latency of `bndmk` is one cycle since two &mu;ops can be executed in parallel.
+
+For another example, consider `bndcl b, m`.
+Its throughput is only one instruction/cycle, and the bottleneck is P1.
+P0 and P7 have only 50% utilization, i.e., they execute one &mu;op in one cycle and then stall for another cycle, waiting for P1.
+Note how `bndcl b, r` version of the same instruction achieves two instructions/cycle because it does not use P1.
+
+Final example is `bndldx b, m`.
+The instruction loads bounds into `b` from a memory location derived from address `m` (from a bounds table).
+This complex instruction is composed of 8 &mu;ops occupying 6 ports and has a low throughput of around 0.4 instructions/cycle.
+We estimate the latency of `bndldx` as taking 4 to 6 cycles, with a bottleneck of loading from memory (ports P2 and P3).
+
+In general, most operations have latencies of one cycle, e.g., the most frequently used `bndcl` and `bndcu`.
 The serious bottleneck is storing/loading the bounds with `bndstx` and `bndldx` since they undergo a complex algorithm of accessing bounds tables.
+
+<small markdown="1">[Up to table of contents](#toc)</small>
+{: .text-right }
+
+
+## Overhead of MPX checks  {#mpxchecks}
+
+In our experiments, we observed that MPX protection does *not* increase the IPC (instructions/cycle) of programs, which is usually the case for memory-safety techniques (see our [IPC evaluation](/performance#ipc)).
+This was surprising: we expected that MPX would increase IPC of programs with low original IPC, i.e., it would take advantage of the underutilized CPU resources.
+
+To understand what causes this bottleneck, we measured the throughput of typical MPX check sequences using the same framework as above.
+We originally blamed an unjustified data dependency between `bndcl`, `bndcu`, and the protected memory access; this speculation turned out to be incorrect.
+
+Here are the throughput measurements:
+<!--
+| Check sequence                  | Tput |   | P0 | P1 | P2 | P3 | P4 | P5 | P6 | P7 |
+|:--------------------------------|-----:|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `load`                          | 2    |   |    |    | 1  | 1  |    |    |    |    |
+| `bndcl r` + `load`              | 4    |   | 1  |    | 1  | 1  |    |    | 1  |    |
+| `bndcl m` + `load`              | 2    |   | 0.5| 1  | 0.5| 0.5|    |    | 0.5|    |
+| `bndcl r` + `bndcu r` + `load`  | 3    |   | 1  |    | 0.5| 0.5|    |    | 1  |    |
+| `bndcl m` + `bndcu m` + `load`  | 1.5  |   | 0.5| 1  |0.25|0.25|    |    | 0.5|    |
+|-
+| `store`                         | 1    |   |    |    | 0.5| 0.5| 1  |    |    |    |
+| `bndcl r` + `store`             | 2    |   | 0.5|    | 0.3| 0.4| 1  |    | 0.5| 0.2|
+| `bndcl m` + `store`             | 2    |   | 0.5| 1  | 0.5| 0.5| 1  |    | 0.5|    |
+| `bndcl r` + `bndcu r` + `store` | 3    |   | 1  |    | 0.3| 0.3| 1  |    | 1  | 0.3|
+| `bndcl m` + `bndcu m` + `store` | 1.5  |   | 0.5| 1  |0.25|0.25| 1  |    | 0.5|    |
+-->
+
+| Check sequence                  | Mem access | IPC  |   | Comments |
+|:--------------------------------|:-----------|-----:|---|:---------|
+|                                 | `load`     | 2    |   | native program, no checks
+| `bndcl r` +                     | `load`     | 4    |   | single-bound check, very rare
+| `bndcl m` +                     | `load`     | 2    |   | single-bound check, very rare
+| `bndcl r` + `bndcu r` +         | `load`     | 3    |   | both-bounds simple check, rare
+| `bndcl m` + `bndcu m` +         | `load`     | 1.5  |   | both-bounds LEA-style check, **frequent**
+|                                 | `store`    | 1    |   | native program, no checks
+| `bndcl r` +                     | `store`    | 2    |   | single-bound check, very rare
+| `bndcl m` +                     | `store`    | 2    |   | single-bound check, very rare
+| `bndcl r` + `bndcu r` +         | `store`    | 3    |   | both-bounds simple check, rare
+| `bndcl m` + `bndcu m` +         | `store`    | 1.5  |   | both-bounds LEA-style check, **frequent**
+
+The table highlights a bottleneck of `bndcl m` and `bndcu m` (due to contention on port P1).
+Let's first consider checks before loads and then before stores.
+
+In case of loads, the original program can execute two loads in parallel, achieving a throughput of 2 IPC.
+Under MPX, the load can be prepended with a single-bound check---which can happen in case of loop optimizations, but is very rare in reality.
+If this single-bound check is `bndcl r`, then IPC doubles: two loads and two bounds-checks occupy four distinct ports simultaneously.
+However, if the check is `bndcl m`, then IPC *stays the same (two)*: only one load and one bounds-check can execute in one cycle since `bndcl m` contends on P1.
+The typical case is when MPX inserts two bounds checks.
+In this case, for `r` checks, IPC increases to three instructions per cycle: one load, one lower-, and one upper-bound check per cycle.
+For `m` checks, IPC becomes *less* than the original: two loads and four checks are scheduled in four cycles, thus IPC of 1.5.
+
+The similar analysis applies for stores.
+However, the original IPC in this case is *one* store per cycle, which means that any variant of MPX checks *increases* IPC.
+
+In summary, since loads usually dominate memory accesses, and both-bounds checks dominate MPX instrumentation, the final IPC is around 1.5-3.
+In comparison to original IPC of 2 loads/cycle, the MPX-protected program has approximately the same IPC.
 
 
 <small markdown="1">[Up to table of contents](#toc)</small>

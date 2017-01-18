@@ -103,11 +103,10 @@ However, we believe that all these issues will be fixed in the future versions o
 **Lesson 2: The new instructions are not as fast as expected.**
 There are two performance issues with MPX instructions:
 
-* Spilling bounds registers into memory often involves costly two-level address translation, which can contribute a significant share to the overhead.
-We, however, do not know any viable solution to this problem.
-* As our [experiments show](/performance#ipc), current Skylake processors perform bounds checking sequentially, i.e., bounds are not checked in parallel with the corresponding memory access.
-If this data dependency did not exist, MPX would be able to use instruction parallelism to a higher extent and the overheads would be lower.
-Fixing this issue would require changes in the next generations of processors. 
+* Loading/storing bounds registers from/to memory involves costly two-level address translation, which can contribute a significant share to the overhead.
+* As our [experiments show](/performance#ipc), current Skylake processors perform bounds checking mostly sequentially, i.e., bounds are not checked in parallel with the corresponding memory access.
+[Our microbenchmarks](/microbenchmarks/#mpxchecks) indicate that this is caused by contention of MPX bounds-checking instructions on one execution port.
+If more ports would be available, MPX would be able to use instruction parallelism to a higher extent and the overheads would be lower.
 
 **Lesson 3: Intel MPX does not support multithreading.**
 Current incarnation of MPX has no support for multithreaded programs.[^multi]
