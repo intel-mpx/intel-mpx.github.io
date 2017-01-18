@@ -117,7 +117,8 @@ Not to introduce additional measurement error, we measured these parameters in p
 ## Benchmarks
 
 We used three benchmark suits in our evaluation: [PARSEC 3.0](http://parsec.cs.princeton.edu/), [Phoenix 2.0](https://github.com/kozyraki/phoenix/tree/master/sample_apps) and [SPEC CPU 2006](https://www.spec.org/cpu2006/).
-During our work, we found and [fixed a set of bugs in them ](/usability#usabilitytable).
+To remove some of the previously found bugs, we applied [a patch to SPEC suite](https://github.com/google/sanitizers/blob/master/address-sanitizer/spec/spec2006-asan.patch).
+Also, during our work, we found and [fixed a set of bugs in them ](/usability#usabilitytable).
 
 All the benchmarks were compiled together with the libraries they depend upon (except `raytrace` from PARSEC which requires X11 libraries).
 
