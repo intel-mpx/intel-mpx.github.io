@@ -32,21 +32,23 @@ Our scripts can be [downloaded here]({{ site.url }}{{ site.baseurl }}/code/asm_m
 In our extension, we wrote a loop with 1,000 copies of an instruction under test and run the loop 100 times. This gives us 100,000 executions in total. We run each experiment 10 times to make sure the results were not influenced by external factors.
 For each run, we initialize all BND registers with dummy values to avoid interrupts caused by failed bound checks.
 
-| Instruction            | &mu;ops | Tput | Lat     |   | P0 | P1 | P2 | P3 | P4 | P5 | P6 | P7 |
-|:-----------------------|--------:|-----:|--------:|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| `bndmk b, m`*          | 2       | 2    | 1       |   | 1  | 1  |    |    |    | 1  | 1  |    |
-| `bndcl b, m`*          | 2       | 1    | 1       |   | 0.5| 1  |    |    |    |    | 0.5|    |
-| `bndcl b, r`           | 1       | 2    | 1       |   | 1  |    |    |    |    |    | 1  |    |
-| `bndcu b, m`*          | 2       | 1    | 1       |   | 0.5| 1  |    |    |    |    | 0.5|    |
-| `bndcu b, r`           | 1       | 2    | 1       |   | 1  |    |    |    |    |    | 1  |    |
-| `bndmov b, m`          | 3       | 1    | 1       |   |    | 1  | 1  | 1  |    |    |    |    |
-| `bndmov b, b`          | 2       | 2    | 1       |   | 1  | 1  |    |    |    | 1  | 1  |    |
-| `bndmov m, b`          | 5       | 0.5  | 2       |   |    | 0.5| 0.3| 0.3| 1  |    |    | 0.3|
-| `bndldx b, m`          | 8       | 0.4  | 4-6     |   | 0.4| 0.5| 0.9| 0.9|    | 0.3| 0.4|    |
-| `bndstx m, b`          | 8       | 0.3  | 4-6     |   |    | 0.3| 0.5| 0.5| 1  |    |    | 0.4|
+| Instruction              | &mu;ops<sup>2</sup> | Tput | Lat     |   | P0<sup>3</sup> | P1<sup>3</sup> | P2<sup>3</sup> | P3<sup>3</sup> | P4<sup>3</sup> | P5<sup>3</sup> | P6<sup>3</sup> | P7<sup>3</sup> |
+|:-------------------------|--------------------:|-----:|--------:|---|         ------:|         ------:|         ------:|         ------:|         ------:|         ------:|         ------:|         ------:|
+| `bndmk b, m`<sup>1</sup> | 2                   | 2    | 1       |   |          1     |          1     |                |                |                |          1     |          1     |                |
+| `bndcl b, m`<sup>1</sup> | 2                   | 1    | 1       |   |          0.5   |          1     |                |                |                |                |          0.5   |                |
+| `bndcl b, r`             | 1                   | 2    | 1       |   |          1     |                |                |                |                |                |          1     |                |
+| `bndcu b, m`<sup>1</sup> | 2                   | 1    | 1       |   |          0.5   |          1     |                |                |                |                |          0.5   |                |
+| `bndcu b, r`             | 1                   | 2    | 1       |   |          1     |                |                |                |                |                |          1     |                |
+| `bndmov b, m`            | 3                   | 1    | 1       |   |                |          1     |          1     |          1     |                |                |                |                |
+| `bndmov b, b`            | 2                   | 2    | 1       |   |          1     |          1     |                |                |                |          1     |          1     |                |
+| `bndmov m, b`            | 5                   | 0.5  | 2       |   |                |          0.5   |          0.3   |          0.3   |          1     |                |                |          0.3   |
+| `bndldx b, m`            | 8                   | 0.4  | 4-6     |   |          0.4   |          0.5   |          0.9   |          0.9   |                |          0.3   |          0.4   |                |
+| `bndstx m, b`            | 8                   | 0.3  | 4-6     |   |                |          0.3   |          0.5   |          0.5   |          1     |                |                |          0.4   |
 
 <sup>
-\* Here `m` means LEA-like address calculation and not memory access!
+1 - Here `m` means LEA-like address calculation and not memory access!<br/>
+2 - &mu;ops is short for number of microoperations per instruction.<br/>
+3 - Denotes the number of microoperations executed on the port per each cycle. It can be interpreted as port usage.<br/>
 </sup>
 
 {% include alert text='**Note 1**: `bndcu` has a one’s complement version `bndcn`, we skip it for clarity.' %}
@@ -71,8 +73,9 @@ Note how `bndcl b, r` version of the same instruction achieves two instructions/
 
 Final example is `bndldx b, m`.
 The instruction loads bounds into `b` from a memory location derived from address `m` (from a bounds table).
-This complex instruction is composed of 8 &mu;ops occupying 6 ports and has a low throughput of around 0.4 instructions/cycle.
+This complex instruction is composed of 8 &mu;ops occupying 6 ports and has a low throughput of around 0.4 instructions/cycle ([Storing bounds in memory](/design#boundstore) explains why it is so complicated).
 We estimate the latency of `bndldx` as taking 4 to 6 cycles, with a bottleneck of loading from memory (ports P2 and P3).
+Moreover, since it uses most of the available ports, it may hinder scalability when hyperthreading is used.
 
 In general, most operations have latencies of one cycle, e.g., the most frequently used `bndcl` and `bndcu`.
 The serious bottleneck is storing/loading the bounds with `bndstx` and `bndldx` since they undergo a complex algorithm of accessing bounds tables.
@@ -119,12 +122,14 @@ Here are the throughput measurements:
 | `bndcl r` + `bndcu r` +         | `store`    | 3    |   | both-bounds simple check, rare
 | `bndcl m` + `bndcu m` +         | `store`    | 1.5  |   | both-bounds LEA-style check, **frequent**
 
+{% include alert text='**Note**: Before we go deeper into discussion, it is crucial to distinguish two types of operands used in bounds checking: direct memory address (`r`) and relative LEA-style addresses(`m`). In assembly, the first one may look like this: `bndcl %rax,%bnd0`--it takes address in `rax`, compare it with lower bound of `bnd0` and rise _#BR_ exception if it is violates the bound. This instruction consist of one comparison and maps to a single microoperation. The second type is more complex: `bndcl  (%rax,%rbx,4),%bnd0`. First, the address has to be calculated by multiplying `rbx` by 4 and then adding `rax`. Only afterwards can the resulting address be checked against the lower bound of `bnd0`. Accordingly, it requires one more microoperation to calculate the address and, as we can see from [the table in the previous section](/microbenchmarks#mpxinstr), it can be executed only on port 1.' %}
+
 The table highlights a bottleneck of `bndcl m` and `bndcu m` (due to contention on port P1).
 Let's first consider checks before loads and then before stores.
 
 In case of loads, the original program can execute two loads in parallel, achieving a throughput of 2 IPC.
 Under MPX, the load can be prepended with a single-bound check---which can happen in case of loop optimizations, but is very rare in reality.
-If this single-bound check is `bndcl r`, then IPC doubles: two loads and two bounds-checks occupy four distinct ports simultaneously.
+If this single-bound check is `bndcl r`, then IPC doubles: two loads and two bounds-checks can be executed in parallel because they do not share ports.
 However, if the check is `bndcl m`, then IPC *stays the same (two)*: only one load and one bounds-check can execute in one cycle since `bndcl m` contends on P1.
 The typical case is when MPX inserts two bounds checks.
 In this case, for `r` checks, IPC increases to three instructions per cycle: one load, one lower-, and one upper-bound check per cycle.

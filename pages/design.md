@@ -121,7 +121,7 @@ This is done to ease the distribution of binaries---the same MPX-enabled program
 On the other hand, MPX has a comprehensive support to interoperate with unmodified legacy code: (1) a `BNDPRESERVE` configuration bit allows to pass pointers without bounds information created by legacy code, and (2) when legacy code changes a pointer in memory, the later `bndldx` of this pointer notices the change and assigns always-true (`INIT`) bounds to it.
 In both cases, the pointer created/altered in legacy code is considered "boundless": this allows for interoperability but also creates holes in MPX defense.
 
-### Storing bounds in memory
+### Storing bounds in memory {#boundstore}
 
 The current version of MPX has only 4 bounds registers, which is clearly not enough for real-world programs---we will run out of registers even if we have only 5 distinct pointers.
 Accordingly, all additional bounds have to be stored (spilled) in memory, similar to spilling data out of general-purpose registers.
