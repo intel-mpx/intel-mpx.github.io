@@ -21,13 +21,13 @@ permalink: "/performance/"
 <div class="medium-8 medium-pull-4 columns" markdown="1">
 
 To evaluate the runtime parameters of MPX, we have tested three benchmark suits: Phoenix 2.0, PARSEC 3.0 and SPEC CPU2006 (see [methodology](/methodology#benchmarks) for details).
-To put the results into a context, we measured not only the two implementations of MPX, but also SafeCode, SoftBound and AddressSanitizer.
+To put the results into a context, we measured not only the two implementations of MPX, but also SAFECode, SoftBound and AddressSanitizer.
 
 Note that some bars and numbers are missing on the plots.
 The missing results are due to errors at compile-/runtime or to unfixable bugs in programs; please refer to the [usability](/usability#usabilitytable) page for more details.
-This especially concerns SafeCode and SoftBound: the prototype implementations we used were not stable enough to run on all benchmarks.
+This especially concerns SAFECode and SoftBound: the prototype implementations we used were not stable enough to run on all benchmarks.
 
-{% include alert text='**Note on native versions**. Each of the tested approaches uses its own compiler, see details at [methodology](/methodology#compilers). The ratios shown in the plots are normalized against respective native versions, e.g., *MPX (ICC)* is normalized against the *ICC* native version, and *SafeCode* against *Clang 3.2.0*.' %}
+{% include alert text='**Note on native versions**. Each of the tested approaches uses its own compiler, see details at [methodology](/methodology#compilers). The ratios shown in the plots are normalized against respective native versions, e.g., *MPX (ICC)* is normalized against the *ICC* native version, and *SAFECode* against *Clang 3.2.0*.' %}
 
 {% include alert text='**Note on AddressSanitizer**. AddressSanitizer is supported on both GCC and Clang. We performed experiments with both versions and discovered that the Clang version performs better than GCC in most cases. Thus, the following plots show the Clang version of AddressSanitizer.' %}
 
@@ -55,11 +55,11 @@ At the same time, ICC is less usable: only *30 programs out of total 38* (79%) b
 This unexpected result testifies that the HW-assisted performance improvements of MPX are offset by its complicated design.
 At the same time, AddressSanitizer provides *worse* security guarantees than MPX; see [security](/security) page for details.
 
-**Observation 3**: SafeCode and SoftBound show good results on Phoenix programs, but perform much worse---both in terms of *performance* and *usability*---on PARSEC and SPEC.
-First, consider SafeCode on Phoenix: due to the almost-pointerless design and simplicity of Phoenix programs, SafeCode achieves a low overhead of 5%.
-However, SafeCode could run only *18 programs out of 31* (58%) on PARSEC and SPEC and exhibited the highest overall overheads.
+**Observation 3**: SAFECode and SoftBound show good results on Phoenix programs, but perform much worse---both in terms of *performance* and *usability*---on PARSEC and SPEC.
+First, consider SAFECode on Phoenix: due to the almost-pointerless design and simplicity of Phoenix programs, SAFECode achieves a low overhead of 5%.
+However, SAFECode could run only *18 programs out of 31* (58%) on PARSEC and SPEC and exhibited the highest overall overheads.
 SoftBound executed only *7 programs* on PARSEC and SPEC (23%).
-Moreover, both SafeCode and SoftBound showed unstable behavior: some programs had overheads of more than 20X.
+Moreover, both SAFECode and SoftBound showed unstable behavior: some programs had overheads of more than 20X.
 
 ### Instruction overhead
 
@@ -89,7 +89,7 @@ Thus, memory-safety techniques benefit from underutilized CPU and partially mask
 
 **Observation 1**: MPX does not increase IPC.
 [Our microbenchmarks](/microbenchmarks/#mpxchecks) indicate that this is caused by contention of MPX bounds-checking instructions on one execution port (P1).
-If more ports would be available, MPX would be able to use instruction parallelism to a higher extent and the overheads would be lower.
+If this functionality would be available on more ports, MPX would be able to use instruction parallelism to a higher extent and the overheads would be lower.
 
 **Observation 2**: Software-only approaches---especially AddressSanitizer and SoftBound---significantly increase IPC, partially hiding performance overheads.
 
@@ -167,7 +167,7 @@ Second, it maintains a "shadow zone" that is directly mapped to main memory and 
 Third, AddressSanitizer has a "quarantine" feature that restricts the reuse of freed memory.
 On the contrary, MPX allocates space only for pointer-bounds metadata and has an intermediary Bounds Directory that trades lower memory consumption for longer assess time.
 
-**Observation 2**: SafeCode benefits from its pool-allocation technique.
+**Observation 2**: SAFECode benefits from its pool-allocation technique.
 It exhibits very low memory overheads.
 Unfortunately, low memory consumption does not imply good performance.
 
@@ -204,7 +204,7 @@ On the contrary, only-writes protection instruments less code and leads to lower
 To evaluate the influence of multithreading, we measured and compared execution times of all benchmarks on 2 and 8 threads.
 The approach for enabling multithreading was different for different benchmark suites: for Phoenix it was enough to set a corresponding compilation flag; PARSEC required an alternative version of the source code (supplied with the suite).
 SPEC does not have a multithreaded version at all.
-Moreover, both SoftBound and SafeCode are not stable in multithreaded environments and therefore were excluded from measurements.
+Moreover, both SoftBound and SAFECode are not stable in multithreaded environments and therefore were excluded from measurements.
 
 {% include alert text='**MPX and multithreading**. MPX does not have any multithreading support. Though we experienced no multithreading issues in our benchmarks, we show how MPX can break in [multithreaded environments](/microbenchmarks#multithreading).' %}
 

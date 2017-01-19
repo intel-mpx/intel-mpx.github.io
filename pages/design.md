@@ -218,11 +218,11 @@ In a glance, the Pointer Checker pass instruments the original program as follow
 Additionally, the pass is responsible for correct passing of bounds between the caller and the callee.
 (ICC has a bug related to incorrect assignment of bounds to `bnd` registers during function calls leading to false alarms at runtime, see [Usability](/usability).)
 
-One of the advantages of Intel MPX---in comparison to AddressSanitizer and SafeCode---is that it supports _narrowing of struct bounds_ by design.
+One of the advantages of Intel MPX---in comparison to AddressSanitizer and SAFECode---is that it supports _narrowing of struct bounds_ by design.
 Consider struct `obj` from our first code snippet.
 It contains two fields: a 100B buffer `buf` and an integer `len` right after it.
 It is easy to see that an off-by-one overflow in `obj.buf` will spillover and corrupt the adjacent `obj.len`.
-AddressSanitizer and SafeCode by design cannot detect such intra-object overflows (though AddressSanitizer can be used to [detect a subset of such errors](https://github.com/google/sanitizers/wiki/AddressSanitizerIntraObjectOverflow)).
+AddressSanitizer and SAFECode by design cannot detect such intra-object overflows (though AddressSanitizer can be used to [detect a subset of such errors](https://github.com/google/sanitizers/wiki/AddressSanitizerIntraObjectOverflow)).
 In contrast, Intel MPX can be instructed to narrow bounds when code accesses a specific field of a struct.
 Narrowing of bounds may require (sometimes intrusive) changes in the source code, and thus represents a decision point on the security-usability scale.
 

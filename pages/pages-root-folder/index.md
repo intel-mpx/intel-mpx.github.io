@@ -58,7 +58,7 @@ We chose three techniques that showcase main classes of memory safety:
 
 * [AddressSanitizer](http://clang.llvm.org/docs/AddressSanitizer.html) is a _trip-wire_ (aka electric-fence) approach. This class surrounds all objects with regions of marked (poisoned) memory, so that any overflow will change values in this region and will be consequently detected.
 * [SoftBound](https://www.cs.rutgers.edu/~santosh.nagarakatte/softbound/) is a _pointer-based_ approach. Such approaches keep track of pointer bounds (the lowest and the highest allowed address of a pointed-to memory region) and check each memory write and read against them.
-* [SafeCode](http://safecode.cs.illinois.edu/) is an _object-based_ approach. Its main idea is enforcing the intended referent, i.e., making sure that pointer manipulations do not change the pointer's referent object.[^pointervsobject]
+* [SAFECode](http://safecode.cs.illinois.edu/) is an _object-based_ approach. Its main idea is enforcing the intended referent, i.e., making sure that pointer manipulations do not change the pointer's referent object.[^pointervsobject]
 
 In this work, we present results of our experiments and discuss applicability of MPX.
 We also analyze [microarchitectural details of MPX](/design) on a set of [microbenchmarks](/microbenchmarks), as well as differences between two existing implementations of MPX in two major compilers---ICC and GCC.
@@ -67,7 +67,7 @@ We also analyze [microarchitectural details of MPX](/design) on a set of [microb
 
 The summary table with our classification of *MPX security levels*---from lowest L1 to highest L6---highlights the trade-off between [__security__](/security) (number of undetected *RIPE bugs* and *Other bugs* in benchmarks), [__usability__](/usability) (number of programs *Broken* because of the applied approach), and [__performance overhead__](/performance) (average *Perf* overhead w.r.t. native executions).
 AddressSanitizer is shown for comparison in the last row.
-SafeCode and SoftBound are *not* shown due to their instability: a large fraction of programs broke under these approaches.
+SAFECode and SoftBound are *not* shown due to their instability: a large fraction of programs broke under these approaches.
 
 Results are shown for GCC versions of MPX and AddressSanitizer.
 In addition, ICC-MPX results are shown in brackets; note that L5 is not applicable to ICC-MPX.
@@ -116,12 +116,12 @@ Unfortunately, we do not see a simple fix to this problem that would *not* affec
 
 **Lesson 4: Intel MPX provides no temporal protection.**
 Current design of MPX protects only against spatial (out-of-bounds accesses) but not temporal (dangling pointers) errors.
-All other tested approaches---AddressSanitizer, SoftBound, and SafeCode---guarantee some form of temporal safety.
+All other tested approaches---AddressSanitizer, SoftBound, and SAFECode---guarantee some form of temporal safety.
 We believe MPX can be enhanced for temporal safety without harming performance, similar to SoftBound.
 
 **In conclusion**, we can say that MPX has a potential for becoming the memory protection tool of choice, but currently, AddressSanitizer is the only production-ready option.
 Even though it provides weaker security guarantees than the other techniques, its current implementation is better in terms of performance and usability.
-SoftBound and SafeCode are research prototypes and they have issues that restrict their usage in real-world applications (although SoftBound provides higher level of security).
+SoftBound and SAFECode are research prototypes and they have issues that restrict their usage in real-world applications (although SoftBound provides higher level of security).
 Both implementations of MPX do not support C programming idioms to the full extent, which causes a significant number of false positives in complex programs.
 GCC implementation is less susceptible to them, but it comes at a cost of worse performance.
 

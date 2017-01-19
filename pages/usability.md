@@ -31,7 +31,7 @@ The below figure highlights the usability of MPX, i.e., the number of MPX-protec
 As can be seen, around 10% of programs break already at the weakest level 1 of MPX protection (without narrowing of bounds and protecting only writes).
 At the highest security level 6 (with enabled `BNDPRESERVE`), most of the programs fail.
 
-As for other approaches, no programs broke under AddressSanitizer. For SafeCode, around 70% programs executed correctly (all Phoenix, half of PARSEC, and 3/4 of SPEC).  SoftBound---being a prototype implementation---showed poor results, with only simple programs surviving (all Phoenix, one PARSEC, and 6 SPEC). See details below.
+As for other approaches, no programs broke under AddressSanitizer. For SAFECode, around 70% programs executed correctly (all Phoenix, half of PARSEC, and 3/4 of SPEC).  SoftBound---being a prototype implementation---showed poor results, with only simple programs surviving (all Phoenix, one PARSEC, and 6 SPEC). See details below.
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
@@ -46,7 +46,7 @@ The below table shows all changes made to the programs under test as well as rea
 AddressSanitizer has no usability issues---by design it makes no assumptions on the C standard with respect to the memory model.
 Also, it is the most stable tested product, fixed and updated with each new version of GCC and Clang.
 
-On the contrary, SoftBound and SafeCode are research prototypes.
+On the contrary, SoftBound and SAFECode are research prototypes.
 They work perfectly with very simple programs from Phoenix, but are not able to compile/run correctly the more complicated benchmarks from PARSEC and SPEC.
 Moreover, SoftBound does *not* support multithreading, and any multithreaded program immediately fails under it.
 

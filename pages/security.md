@@ -47,14 +47,14 @@ Even under these relaxed security flags all compilers were susceptible only to a
 | MPX (ICC) no narrow bounds | **14/34** (all intra-object overflows) |
 | AddressSanitizer           | **12/64** (all intra-object overflows) |
 | SoftBound                  | **14/38** (all intra-object overflows) |
-| SafeCode                   | **14/38** (all intra-object overflows) |
+| SAFECode                   | **14/38** (all intra-object overflows) |
 
 {% include alert text='**Note 1**. In Col. 2, **41/64** means that 64 attacks were successful in native GCC version, and 41 attacks remained in MPX version.' %}
 {% include alert text='**Note 2**. The "default" version of GCC-MPX means without `-fchkp-first-field-has-own-bounds` and with `BNDPRESERVE=0`, see below.' %}
 
 Surprisingly, a default GCC-MPX version showed very poor results, with 41 attacks (or 64% of all possible attacks) succeeding. As it turned out, the default GCC-MPX flags are sub-optimal. First, we [found a bug](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=78631) in the `memcpy` wrapper which forced bounds registers to be nullified, so the bounds checks on `memcpy` were rendered useless.[^memcpybug] This bug disappears if `BNDPRESERVE` is manually set to one. Second, the MPX pass in GCC does not narrow bounds for the first field of a struct by default, in contrast to ICC which is more strict. To catch intra-object overflows happening in the first field of structs one needs to pass the `-fchkp-first-field-has-own-bounds` flag to GCC. When we enabled these two flags, all attacks were prevented; all next rows in the table were tested with these flags.
 
-Other results are expected. MPX versions without narrowing of bounds overlook 14 intra-object overflow attacks, where a vulnerable buffer and a victim object live in the same struct. The same attacks are overlooked by AddressSanitizer, SoftBound, and SafeCode. Interestingly, AddressSanitizer has 12 working attacks, i.e., two attacks less than other approaches. Though we did not inspect this in detail, AddressSanitizer was able to prevent two shellcode intra-object attacks on the heap.
+Other results are expected. MPX versions without narrowing of bounds overlook 14 intra-object overflow attacks, where a vulnerable buffer and a victim object live in the same struct. The same attacks are overlooked by AddressSanitizer, SoftBound, and SAFECode. Interestingly, AddressSanitizer has 12 working attacks, i.e., two attacks less than other approaches. Though we did not inspect this in detail, AddressSanitizer was able to prevent two shellcode intra-object attacks on the heap.
 
 We performed the same experiment with *only-writes* versions of these approaches, and the results were exactly the same. This is explained by the fact that RIPE constructs only control-flow hijacking attacks and not information leaks (which could escape only-writes protection).
 
@@ -83,7 +83,7 @@ Below are the logs which show which attacks worked under each approach.
   * [full]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_asan.txt)
   * [only-writes]({{ site.url }}{{ site.baseurl }}/code/ripe/gcc_asan_only_write.txt)
 * [SoftBound]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_softbound.txt)
-* [SafeCode]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_safecode.txt)
+* [SAFECode]({{ site.url }}{{ site.baseurl }}/code/ripe/clang_safecode.txt)
 
 {% include alert text='Raw results can be found in the [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/dev/raw_results/ripe).' %}
 
@@ -117,7 +117,7 @@ The bugs found are:
 | MPX (ICC) no narrow bounds + only writes | &#10004; | &#10004; | &#10004; | NA       |          |          |
 | AddressSanitizer                         | &#10004; | &#10004; | &#10004; |          |          |          |
 | SoftBound                                | NA       |          | NA       | NA       |          | NA       |
-| SafeCode                                 | NA       | &#10004; | &#10004; | NA       |          |          |
+| SAFECode                                 | NA       | &#10004; | &#10004; | NA       |          |          |
 
 A more refined summary table as well as descriptions of the aforementioned bugs can be found in the [Usability page]({{ site.url }}{{ site.baseurl }}/usability).
 

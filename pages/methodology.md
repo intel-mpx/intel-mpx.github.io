@@ -75,7 +75,7 @@ For experiments on [case studies](/case-studies), we used two machines with the 
 
 {% include alert text='Note that SoftBound provides spatial *and* temporal protection (MPX provides *only spatial* protection). This is the default behavior, controlled by a special macro flag. [We could not change this flag to provide only spatial support](https://github.com/santoshn/softboundcets-3.8.0/issues/4#issuecomment-226493154) (the question concerns version 3.8.0 but applies to 3.4.0).' %}
 
-* Clang/LLVM (SafeCode):
+* Clang/LLVM (SAFECode):
     * [Source](http://safecode.cs.illinois.edu/downloads.html)
     * Version: 3.2.0
     * Configuration flags:
@@ -248,7 +248,7 @@ Linker flags:
 -lm -lrt
 ```
 
-#### SafeCode
+#### SAFECode
 
 Compiler flags:
 
