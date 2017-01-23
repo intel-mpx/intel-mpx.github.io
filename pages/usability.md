@@ -85,14 +85,207 @@ These cases are represented as gray boxes.
 {: .text-right }
 
 
-<!--
-## Changes in Benchmarks  {#changes}
+## All Bugs in Benchmarks  {#changes}
 
-TODO: dump changes from our Wiki
+Below is the list of changes/fixes that were applied to benchmarks, as well as those issues that could not be easily fixed (real bugs and complex compiler bugs).
+
+### Phoenix
+
+* **kmeans: performance fix**.
+Changed the values of `DEF_DIM=5` (previously `3`) and `DEF_GRID_SIZE=10000` (previously `1000`) to increase the execution time.
+
+
+### PARSEC
+
+* **blackscholes: ICC compiler bug fix**.
+Multithreaded version failed under all ICC-MPX with error due to a declaration of a variable-length stack array (C99 feature) in `blackscholes.cpp:400`. Example line: `int tids[nThreads]` --- a stack-allocated int array. The fix: declaring arrays with constant: `int tids[MAX_THREADS]`.
+[Bug report](https://software.intel.com/en-us/forums/intel-c-compiler/topic/701764).
+
+* **canneal: AddressSanitizer (Clang) bug fix**.
+Multithreaded version segfaulted under AddressSanitizer (Clang). The problem was in a missing return value in `main.cpp:141`, in thread entry point `void* entry_pt(void* data)`. The fix: `return 0` in the end of this function. *Note* this is not a memory-safety problem, but a more strict interpretation of the C standard by AddressSanitizer under Clang/LLVM.
+
+* **dedup: ICC compiler bug fix**.
+Multithreaded version failed under all ICC-MPX with error due to a declaration of a variable-length stack array (C99 feature) in `encoder.c:1221`, `encoder.c:1229` and `encoder.c:1237`. Example line: `chunk_thread_args[conf->nthreads]` --- a stack-allocated int array. The fix: declaring arrays with constant: `chunk_thread_args[MAX_THREADS]`.
+[Bug report](https://software.intel.com/en-us/forums/intel-c-compiler/topic/701764).
+
+* **ferret: buffer overflow fix**.
+Ferret assumes RGB files, but some inputs were black and white.
+In `image.c:image_read_rgb_hsv` the input file is assumed to have 3 components, one byte for red, green and blue accordingly.
+But for some files `cinfo.output_components` is set to 1, that is those files were black and white.
+So it looped through 3 times more data than was allocated: *classic buffer overflow*.
+This bug was detected by all approaches.
+The fix: skipping black and white input images (manually removed these input files).
+
+* **ferret: buffer overflow fix (another)**.
+In `cass.h:84`, an array of 1 element was defined in `struct _cass_vec_t`: `float_data[1]`. Later, the code looped over 9 elements in `extract.c:233`: `vec->u.float_data[k] = ...`. It is a *classic buffer overflow* which (fortunately) did not corrupt any memory. The fix: increasing array size: `float_data[14]`.
+
+* **ferret (libjpeg lib): variable-sized array fix**.
+There was a variable-sized array declared as `jpeg_natural_order[]`.
+GCC-MPX with bounds-narrowing assumed zero size for this array.
+The fix: declaring array with constant: `jpeg_natural_order[64+16]`.
+
+* **ferret (libjpeg lib): memory model violation, wontfix**.
+ICC-MPX with bounds-narrowing fails in `alloc_small` function (`jmemmgr.c:278`) because of incorrectly defined object sub-bounds: `hdr_ptr = mem->small_list[pool_id]`.
+`mem` is of type `my_memory_mgr` and is a subfield (substruct) of the function argument `cinfo`, but originally this subfield is of type `jpeg_memory_mgr` (104 bytes in size and lacking `small_list` field).
+The code needs to typecast `jpeg_memory_mgr` (104B-sized) to `my_memory_mgr` (>104B-sized), and ICC-MPX pass gets confused because of `cinfo->mem = &mem->pub` in `jmemmgr.c:1095`.
+*Note* that it works correctly under GCC-MPX (`mem->pub` is the first subfield, and GCC-MPX by default uses `-fno-chkp-first-field-has-own-bounds` -- the first field has bounds of the whole object).
+
+* **raytrace: memory model violation, wontfix**.
+ICC-MPX with bounds-narrowing fails.
+`RTVec_t` class (defined in `RTVec.hxx` + `RTVecBody.h`) has the first member `typename DataArray::AlignedDataType x`.
+Actually, `x` is used as an array (the original 4B type is overflowed) via `DataType* data() { return &x; }` (in `RTVecBody.h`).
+ICC-MPX narrows bounds in `data` function to only `x`, but it is later used to access beyond these 4 bytes.
+*Note* that it works correctly under GCC-MPX (`x` is the first subfield, and GCC-MPX by default uses `-fno-chkp-first-field-has-own-bounds` -- the first field has bounds of the whole object).
+
+* **swaptions: ICC compiler bug fix**.
+Multithreaded version failed under all ICC-MPX with error due to a declaration of a variable-length stack array (C99 feature) in `HJM_Securities.cpp:270`. Example line: `int threadIDs[nThreads]` --- a stack-allocated int array. The fix: declaring array with constant: `int threadIDs[MAX_THREAD]`.
+[Bug report](https://software.intel.com/en-us/forums/intel-c-compiler/topic/701764).
+
+* **vips (glib lib): flexible array fix**.
+There was a flexible array in `gtype.c:246` in struct `_TypeNode` declared as `supers[1]`.
+Later it was correctly malloced with greater size, but ICC-MPX and GCC-MPX with bounds-narrowing (both) always assume the size of `1`.
+The fix: declaring array with zero size which MPX treats as boundless: `supers[0]`.
+
+* **vips: variable-sized array fix**.
+There was a variable-sized array declared as `im__sizeof_bandfmt[]` in `include/vips/image.h` and `iofuncs/util.c`.
+GCC-MPX with bounds-narrowing assumed zero size for this array.
+The fix: declaring array with constant: `im__sizeof_bandfmt[10]`.
+
+* **vips: ICC compiler bug, wontfix**.
+The bug triggers only on ICC-MPX with bounds-narrowing and in peculiar corner-cases (some ICC autovectorization optimization clashes with MPX instrumentation).
+[Bug report](https://software.intel.com/en-us/forums/intel-c-compiler/topic/700675).
+
+* **x264: variable-sized array fix**.
+There were variable-sized arrays declared as `x264_levels[]` and `x264_cpu_names[]`.
+GCC-MPX with bounds-narrowing assumed zero size for these arrays.
+The fix: declaring arrays with constants: `x264_levels[16]` and `x264_cpu_names[16]`.
+
+* **x264: double-free bug fix**.
+Fixed double-free bug as reported in [https://mailman.videolan.org/pipermail/x264-devel/2010-January/006717.html](https://mailman.videolan.org/pipermail/x264-devel/2010-January/006717.html).
+The fix touches `set.c:x264_cqm_delete` function.
+(This bug fix is not counted in usability study since it is temporal bug.)
+
+* **x264: buffer overflow bug, wontfix**.
+Buffer overflow bug as reported in [https://ffmpeg.org/pipermail/ffmpeg-devel/2013-March/141083.html](https://ffmpeg.org/pipermail/ffmpeg-devel/2013-March/141083.html).
+It was detected only by GCC-MPX with bounds-narrowing.
+In a nutshell, there is a benign buffer overwrite of `quant4_mf[4]` field in `x264_cqm_init` function (writes into non-existing fifth and sixth array items).
+Without narrowing of bounds, GCC-MPX does not crash the program -- since the buffer overwrite is in-struct.
+ICC-MPX does not detect this---most probably because ICC has another memory layout which hides the bug.
+Wontfix: others simply ignored this bug and worked-around it until new version of x264, where bug disappeared.
+
+* **x264: ICC compiler bug, wontfix**.
+The bug triggers on all versions of ICC-MPX and in peculiar corner-cases (ICC-MPX pass incorrectly passes bounds through indirect call).
+In `encoder_analyse.c:x264_mb_cache_fenc_satd`, the variable `fenc` incorrectly gets NULL bounds, which makes MPX later crash.
+[Bug report](https://software.intel.com/en-us/forums/intel-c-compiler/topic/700550).
+
+### SPEC
+
+Note that we applied a [patch](https://github.com/google/sanitizers/blob/master/address-sanitizer/spec/spec2006-asan.patch) by AddressSanitizer authors.
+This patch fixes bugs in perlbench and h264ref; we mention these bug fixes below.
+
+* **dealII: Unknown bug, wontfix**.
+All version of ICC-MPX instrument the libstdc++ library used by dealII.
+Thus, `std::vector` operations are MPX-instrumented.
+Somewhere in the middle of execution, `std::vector::~vector` destructor is called, which does `std::vector::erase` of all items, and this function fails due to incorrectly defined bounds.
+Wontfix: the `#BR` exception happens far away from the bounds allocation that triggers it, so it is impossible to backtrack and identify the root cause.
+
+* **gcc: flexible array fix**.
+There were flexible arrays `fld[1]` and `elem[1]` in `rtl.h:201` and `rtl.h:224`.
+At runtime, they were correctly malloced with greater sizes, but ICC-MPX and GCC-MPX with bounds-narrowing (both) always assume the size of `1`.
+The fix: declaring arrays with big-enough sizes: `fld[250]` and `elem[20]`.
+
+* **gcc: numerous memory model violations, wontfix**.
+gcc has its own memory management, with bit twiddling, wild type casts, and complex structs.
+Debugging it is hard.
+In the end, there is a narrowing of bounds in `hashtable.c:ht_lookup` that creates too-narrow bounds, leading to false positive in ICC-MPX and GCC-MPX with bounds-narrowing (both).
+
+* **gobmk: ICC compiler bug, wontfix**.
+For ICC-MPX without bounds-narrowing, when compiled with `-O3`, gobmk creates a wrong bound for a global variable `board` (defined in `globals.c` as a huge char array).
+Some conflicting optimization produces the exception-triggering code: `bndmk  bnd1,[r15+0x1]; bndcu  bnd1,[r12+rcx*1+0xd23934]`.
+Here the first line creates bounds `{board, board+1}` of only two bytes, and the second line crashes with `#BR`.
+Wontfix, we have not yet filed a bug report (cannot create a reproducible test case).
+
+* **h264ref: buffer overflow fix**.
+Buffer overflow in `mv-search.c:1093`. The line is: `for (dd=d[k=0]; k<16; dd=d[++k])` -- with an incorrect pre-increment.
+The fix: ` for (dd=d[k=0]; k<16; dd=d[k++])` -- with correct post-increment.
+This is a famous bug: [https://www.spec.org/cpu2006/Docs/faq.html#Run.05](https://www.spec.org/cpu2006/Docs/faq.html#Run.05).
+(Also fixed in AddressSanitizer patch.)
+
+* **h264ref: buffer overflow, wontfix**.
+The in-struct buffer overflow happens in `macroblock.c:writeMotionInfo2NAL`.
+The offending code: `int blc_size[8][2]; int step_h0 = (input->blc_size[IS_P8x8(currMB) ? 4 : currMB->mb_type][0] >> 2)`.
+Here, the program chooses `currMB->mb_type=10` as index. But since it is `10`, it overflows `input->blc_size[8]` and reads some garbage from adjacent fields.
+Only GCC-MPX with bounds-narrowing detects this bug.
+Interestingly, ICC-MPX does not detect this bug.
+Though it also has `10`, but the bounds it checks against are huge for `blc_size[]` and no error is detected.
+So there is some slight difference in how ICC and GCC narrowed bounds here---most probably due to different memory layouts.
+
+* **h264ref: ICC compiler bug, wontfix**.
+The bug triggers only on ICC-MPX with bounds-narrowing and in peculiar corner-cases (some ICC autovectorization optimization clashes with MPX instrumentation).
+[Bug report](https://software.intel.com/en-us/forums/intel-c-compiler/topic/700675).
+
+* **milc: ICC compiler bug, wontfix**.
+The bug triggers only on ICC-MPX (with and without bounds-narrowing) and in peculiar corner-cases (some ICC autovectorization optimization clashes with MPX instrumentation).
+In `su3_proj.c:su3_projector`, the bound is narrowed to 16 bytes: `bndmk  bnd0,[rsi+0xf]`. Later, the argument `b` is compared against this bound. Since ICC employs autovectorization, `rsi` loads more than 16 bytes (actually, 32 bytes), and the upper-bound check `bndcu  bnd0,[rsi+0x1f]` fails.
+Interesting and unfortunate, there was **no such bug** in ICC 16.
+[Bug report](https://software.intel.com/en-us/forums/intel-c-compiler/topic/700675).
+
+* **omnetpp: bug fix**.
+There was a lazy memory copy of a structure, which failed under AddressSanitizer and ICC-MPX: `memcpy( &ss, &val.ss, Max(sizeof(ss), sizeof(func)) )`.
+The fix: replaced it with an explicit copy of the structure fields: `ss.sht = val.ss.sht; memcpy( &ss.str, &val.ss.str, sizeof(ss.str));`.
+
+* **perlbench: buffer overflow fix**.
+In `perlio.c:PerlIO_find_layer`, there was a wrong string comparison: `if (memEQ(f->name, name, len) && f->name[len] == 0)`, and if `f->name` is shorter than `len`, there was an out-of-bounds read.
+The fix: replaced with `if (!strcmp(f->name, name))`.
+(Also fixed in AddressSanitizer patch.)
+
+* **perlbench: flexible array fix**.
+There was a flexible array in `hv.h:26` in struct `hek` declared as `hek_key[1]`.
+Later it was correctly malloced with greater size, but ICC-MPX and GCC-MPX with bounds-narrowing (both) always assume the size of `1`.
+The fix: declaring array with zero size which MPX treats as boundless: `hek_key[0]`.
+
+* **perlbench: buffer overflow, wontfix**.
+Out-of-bounds write in `regcomp.c:S_reg_node`: the `pRExC_state->emit->flags` (of type `regnode`) is not the correct address, and `#BR` is triggered.
+This bug was (found by others in 2002)[http://www.nntp.perl.org/group/perl.perl5.porters/2002/04/msg57759.html and http://www.gossamer-threads.com/lists/perl/porters/149934].
+The bug was found only by GCC-MPX with bounds-narrowing.
+ICC-MPX does not detect this---most probably because ICC has another memory layout which hides the bug.
+Wontfix: others did not fix the bug but simply used a newer version of perl (where bug disappeared).
+
+* **soplex: numerous memory model violations, wontfix**.
+Soplex has peculiar memory-management feature that *directly moves* objects from one referent region to another.
+This breaks memory-management assumptions of bounds checking completely.
+The crux: `reMax` function in `dataset.h:458` does the following: (1) memorize the previous referent address of the object, (2) allocate new memory region using `realloc`, and (3) calculate the difference (delta) between the new memory region and the previous one.
+This delta is later used in `move` of a list in `islist.h:354` to *genuinely change* pointer-to-object from one address to another, without any respect towards pointer bounds (which is associated with the previous memory region).
+This leads to false positive and breaks all MPX versions.
+
+* **xalancbmk: memory model violation, wontfix**.
+A bounds check in `DOMParentNode.cpp:insertBefore` assumes a subobject, but the program performs a *container*-style (see (Beyond PDP-11)[http://dl.acm.org/citation.cfm?id=2694367]) subtraction: `base - 0x8`.
+This forces the lower-bound check to trigger `#BR` exception.
+Only GCC-MPX and ICC-MPX with bounds-narrowing (both) have this issue.
+
+* **xalancbmk: ICC compiler bug, wontfix**.
+The bug triggers on ICC-MPX without bounds-narrowing and in peculiar corner-cases (ICC-MPX pass incorrectly passes bounds through indirect call).
+In `egularExpression.cpp:matches`, the variable `pMatch` incorrectly gets NULL bounds, which makes MPX later crash.
+[Bug report](https://software.intel.com/en-us/forums/intel-c-compiler/topic/700550).
+
+* **xalancbmk: flexible array fix**.
+There was a flexible array in `DOMStringPool.cpp:83` in struct `DOMStringPoolEntry` declared as `fString[1]`.
+Later it was correctly malloced with greater size, but ICC-MPX and GCC-MPX with bounds-narrowing (both) always assume the size of `1`.
+The fix: declaring array with zero size which MPX treats as boundless: `fString[0]`.
+
+* **xalancbmk: GCC compiler bug, wontfix**.
+Fatal internal GCC compiler error under GCC-MPX with writes-only: `XercesDefs.hpp:456:39: internal compiler error: in ipa_propagate_frequency, at ipa-profile.c:403`.
+
+* **mcf: memory model violation, wontfix (only for test input)**.
+`mcf`, just like `soplex`, has a peculiar memory-management feature that *directly moves* objects from one referent region to another.
+This breaks memory-management assumptions of bounds checking completely.
+`implicit.c:resize_prob` function does the following: (1) memorize the previous referent address of the object, (2) allocate new memory region using `realloc`, and (3) calculate the difference (delta) between the new memory region and the previous one.
+This delta is used below in the same function (`implicit.c:69`) to *genuinely change* pointer-to-object from one address to another, without any respect towards pointer bounds (which is associated with the previous memory region). This leads to false-positive `#BR` exceptions.
+*Note*: this `realloc` behavior triggers only in special cases; it does not trigger on `native` inputs, but triggers on `test`.
+
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
--->
 
 </div><!-- /.medium-8.columns -->
 </div><!-- /.row -->
