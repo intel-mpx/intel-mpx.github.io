@@ -94,36 +94,43 @@ For L6, performance overheads are not shown since too few programs executed corr
 Intel MPX is a promising technology: it provides the strongest possible security guarantees against spatial errors, it instruments most programs transparently and correctly, its ICC incarnation has moderate overheads of 20-50%, it can interoperate with unprotected legacy libraries, and its protection level is easily configurable.
 However, our evaluation indicates that it is not yet mature enough for widespread use because of the following issues:
 
-**Lesson 1: The compiler support is not mature enough.**
-MPX support is available for GCC and ICC compilers.[^clang]
-At the compiler level, GCC-MPX has [severe performance issues](/performance) whereas ICC-MPX has [a number of compiler bugs](/usability).
-At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus not detecting bugs such as the [Nginx bug](case-studies/#security-1).
-However, we believe that all these issues will be fixed in the future versions of the compilers.
-
-**Lesson 2: The new instructions are not as fast as expected.**
-There are two performance issues with MPX instructions:
+**Lesson 1: New MPX instructions are not as fast as expected.**
+There are two performance issues with MPX instructions which together lead to tangible runtime overheads of 20−50% (in the ICC case):
 
 * Loading/storing bounds registers from/to memory involves costly two-level address translation, which can contribute a significant share to the overhead.
 * As our [experiments show](/performance#ipc), current Skylake processors perform bounds checking mostly sequentially.
 [Our microbenchmarks](/microbenchmarks/#mpxchecks) indicate that this is caused by contention of MPX bounds-checking instructions on one of the execution ports.
 If this functionality would be available on more ports, MPX would be able to use instruction parallelism to a higher extent and the overheads would be lower.
 
-**Lesson 3: Intel MPX does not support multithreading.**
-Current incarnation of MPX has no support for multithreaded programs.[^multi]
-[Our microbenchmarks](microbenchmarks/#multithreading) show that an MPX-protected multithreaded program can have both false positives (false alarms) and false negatives (missed bugs).
-Until this issue is fixed---either at the SW or at the HW level---MPX cannot be considered safe in multithreaded environments.
-Unfortunately, we do not see a simple fix to this problem that would *not* affect performance adversely.
+**Lesson 2: The supporting infrastructure is not mature enough.**
+MPX support is available for GCC and ICC compilers.[^clang]
+At the compiler level, GCC-MPX has [severe performance issues](/performance) (150% overhead on average) whereas ICC-MPX has [a number of compiler bugs](/usability) (such that 10% of programs broke in our evaluation).
+At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus not detecting bugs such as the [Nginx bug](case-studies/#security-1).
 
-**Lesson 4: Intel MPX provides no temporal protection.**
+**Lesson 3: MPX provides no temporal protection.**
 Current design of MPX protects only against spatial (out-of-bounds accesses) but not temporal (dangling pointers) errors.
 All other tested approaches---AddressSanitizer, SoftBound, and SAFECode---guarantee some form of temporal safety.
 We believe MPX can be enhanced for temporal safety without harming performance, similar to SoftBound.
 
-**In conclusion**, we can say that MPX has a potential for becoming the memory protection tool of choice, but currently, AddressSanitizer is the only production-ready option.
+**Lesson 4: MPX does not support multithreading.**
+Current incarnation of MPX has no support for multithreaded programs.[^multi]
+[Our microbenchmarks](microbenchmarks/#multithreading) show that an MPX-protected multithreaded program can have both false positives (false alarms) and false negatives (missed bugs and undetected attacks).
+Until this issue is fixed---either at the software or at the hardware level---MPX cannot be considered safe in multithreaded environments.
+Unfortunately, we do not see a simple fix to this problem that would *not* affect performance adversely.
+
+**Lesson 5: MPX is not compatible with some C idioms.**
+MPX [imposes restrictions on allowed memory layout](/design/#application) which conflict with several widespread C programming practices, such as intra-structure memory accesses and custom implementation of memory management.
+This can result in unexpected program crashes and is hard to fix; we were not able to run correctly [8 − 13% programs](/usability/) (this would require substantial code changes).
+
+**In conclusion**, we believe that MPX has a potential for becoming the memory protection tool of choice, but currently, AddressSanitizer is the only production-ready option.
 Even though it provides weaker security guarantees than the other techniques, its current implementation is better in terms of performance and usability.
 SoftBound and SAFECode are research prototypes and they have issues that restrict their usage in real-world applications (although SoftBound provides higher level of security).
 Both implementations of MPX do not support C programming idioms to the full extent, which causes a significant number of false positives in complex programs.
 GCC implementation is less susceptible to them, but it comes at a cost of worse performance.
+
+We expect that most identified issues with Intel MPX will be fixed in future versions.
+Still, support for multithreading and restrictions on memory layout are inherent design limitations of MPX which would require sophisticated solutions, which would in turn negatively affect performance.
+We hope our work will help practitioners to better understand the benefits and caveats of Intel MPX, and researchers---to concentrate their efforts on those issues still waiting to be solved.
 
 ## Looking for more details?
 
