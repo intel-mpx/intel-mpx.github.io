@@ -127,13 +127,16 @@ Here are the throughput measurements:
 The table highlights a bottleneck of `bndcl m` and `bndcu m` (due to contention on port P1).
 Let's first consider checks before loads and then before stores.
 
-In case of loads, the original program can execute two loads in parallel, achieving a throughput of 2 IPC.
+In case of loads, the original program can execute two loads in parallel, achieving a throughput of 2 IPC (note that the loaded data is always in a Memory Ordering Buffer).
 Under MPX, the load can be prepended with a single-bound check---which can happen in case of loop optimizations, but is very rare in reality.
 If this single-bound check is `bndcl r`, then IPC doubles: two loads and two bounds-checks can be executed in parallel because they do not share ports.
 However, if the check is `bndcl m`, then IPC *stays the same (two)*: only one load and one bounds-check can execute in one cycle since `bndcl m` contends on P1.
 The typical case is when MPX inserts two bounds checks.
 In this case, for `r` checks, IPC increases to three instructions per cycle: one load, one lower-, and one upper-bound check per cycle.
 For `m` checks, IPC becomes *less* than the original: two loads and four checks are scheduled in four cycles, thus IPC of 1.5.
+These scenarious are illustrated by the following figure:
+
+<img class="t20" width="95%" src="{{ site.urlimg }}mpx_checks.jpg" alt="Bottleneck of bounds checking">
 
 The similar analysis applies for stores.
 However, the original IPC in this case is *one* store per cycle, which means that any variant of MPX checks *increases* IPC.
@@ -141,6 +144,11 @@ However, the original IPC in this case is *one* store per cycle, which means tha
 In summary, since loads usually dominate memory accesses, and both-bounds checks dominate MPX instrumentation, the final IPC is around 1.5-3.
 In comparison to original IPC of 2 loads/cycle, the MPX-protected program has approximately the same IPC.
 
+As our [performance measurements](/performance/) show, it causes major performance degradation.
+It can be fixed, however; if the next generations of CPUs will provide the relative memory address calculation on other ports, the checks could be parallelized and performance will improve.
+We can speculate that GCC-MPX could reach the results of AddressSanitizer in this case, because the instruction overheads are similar. 
+Accordingly, ICC version would be even better and the slowdowns might drop lower than 20%.
+But we must note that we do not have any hard proof for this speculation.
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
