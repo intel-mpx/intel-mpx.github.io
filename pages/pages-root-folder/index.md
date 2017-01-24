@@ -91,11 +91,11 @@ For L6, performance overheads are not shown since too few programs executed corr
 
 ### Lessons Learned {#lessons}
 
-Intel MPX is a promising technology: it provides the strongest possible security guarantees against spatial errors, it instruments most programs transparently and correctly, its ICC incarnation has moderate overheads of 20-50%, it can interoperate with unprotected legacy libraries, and its protection level is easily configurable.
+Intel MPX is a promising technology: it provides the strongest possible security guarantees against spatial errors, it instruments most programs transparently and correctly, its ICC incarnation has moderate overheads of ~50%, it can interoperate with unprotected legacy libraries, and its protection level is easily configurable.
 However, our evaluation indicates that it is not yet mature enough for widespread use because of the following issues:
 
 **Lesson 1: New MPX instructions are not as fast as expected.**
-There are two performance issues with MPX instructions which together lead to tangible runtime overheads of 20−50% (in the ICC case):
+There are two performance issues with MPX instructions which together lead to tangible runtime overheads of ~50% (in the ICC case):
 
 * Loading/storing bounds registers from/to memory involves costly two-level address translation, which can contribute a significant share to the overhead.
 * As our [experiments show](/performance#ipc), current Skylake processors perform bounds checking mostly sequentially.
