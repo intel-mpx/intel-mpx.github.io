@@ -167,6 +167,8 @@ Second, it maintains a "shadow zone" that is directly mapped to main memory and 
 Third, AddressSanitizer has a "quarantine" feature that restricts the reuse of freed memory.
 On the contrary, MPX allocates space only for pointer-bounds metadata and has an intermediary Bounds Directory that trades lower memory consumption for longer assess time.
 
+{% include alert text='**Note**. Quarantine zone is a temporal-protection feature of AddressSanitizer and, in principle, it gives an unfair advantage to Intel MPX which lacks this kind of protection. Indeed, if quarantine zone is disabled, AddressSanitizer\'s memory overhead drops on average to ~1.5x for both PARSEC and SPEC, although the performance overhead is not influenced. We did not include this number into our main results because the goal of our study was to compare the solutions in their _default_ configuration, without any tweaks from the side of end user.'%}
+
 **Observation 2**: SAFECode benefits from its pool-allocation technique.
 It exhibits very low memory overheads.
 Unfortunately, low memory consumption does not imply good performance.
