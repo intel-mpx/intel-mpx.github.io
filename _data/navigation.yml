@@ -2,6 +2,10 @@
   url: "/"
   side: left
 
+- title: "Overview"
+  url: "/overview/"
+  side: left
+
 - title: "MPX Design"
   url: "/design/"
   side: left
