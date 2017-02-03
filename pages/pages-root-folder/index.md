@@ -33,20 +33,49 @@ homepage: true
 <div class="large-6 large-push-3 columns" markdown="0">
     
     <h1 id="intel-mpx-explained" style="text-align:center; margin-bottom: 2pt;">Intel MPX Explained</h1>
-    <div style="text-align:center; color: #333;">Complete results of the Intel MPX evaluation from perspectives of performance, security, and usability</div>
+    <div style="text-align:center; color: #333;">An empirical study of Intel MPX and software-based bounds checking approaches</div>
     <br/>
-    
+
 </div><!-- /.large-6.columns -->
 </div><!-- /.row 1 -->
+
+
+<!--<div class="row">
+  
+    <div class="large-2 large-push-3 columns" markdown="0" style="text-align:center;">
+        <a href="https://arxiv.org/pdf/1702.00719v1.pdf">
+            <img class="t0" width="20%" src="/images/pdf-icon.png" alt="Technical Report">
+            <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">Technical Report</div>
+        </a>
+    </div>
+    
+    <div class="large-2 large-push-3 columns" markdown="0" style="text-align:center;">
+        <a href="https://arxiv.org/pdf/1702.00719v1.pdf">
+            <img class="t0" width="20%" src="/images/bibtex.jpg" alt="BibTex">
+            <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">BibTex</div>
+        </a>
+    </div>
+    
+    <div class="large-2 large-pull-3 columns" markdown="0" style="text-align:center;">
+        <a href="https://github.com/OleksiiOleksenko/intel_mpx_explained">
+            <img class="t0" width="20%" src="/images/github.png" alt="Source Code">
+            <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">Source Code</div>
+        </a>
+    </div>
+
+</div>-->
+
 
 <div class="row">
 <div class="medium-12 columns" markdown="1">
 
 #### Corresponding publications:
 
-* [Our ATC'17 submission "Intel MPX explained"]() _(not yet published)_
+<!--* [Our ATC'17 submission "Intel MPX explained"]() _(not yet published)_-->
 * [Technical Report "Intel MPX Explained: An Empirical Study of Intel MPX and Software-based Bounds Checking Approaches"](https://arxiv.org/abs/1702.00719)
-[<img class="t0" width="25" src="/images/pdf-icon.png" alt="Technical Report">](https://arxiv.org/pdf/1702.00719v1.pdf)
+<a href="https://arxiv.org/pdf/1702.00719v1.pdf"><img class="t0" width="3%" src="/images/pdf-icon.png" alt="Technical Report"></a>
+<a href="/code/tech_rep.bib"><img class="t0" width="3%" src="/images/bibtex.jpg" alt="BibTex"></a>
+<a href="https://github.com/OleksiiOleksenko/intel_mpx_explained"><img class="t0" width="3%" src="/images/github.png" alt="Source Code"></a>
 
 ----
 
@@ -57,7 +86,6 @@ homepage: true
 
 <div class="row">
 <div class="large-4 columns" markdown="0">
-    
     
     <div style="text-align:center;">
         <a href="/performance/">
@@ -120,8 +148,6 @@ homepage: true
 [Tests on real-world case studies](/case-studies/)
 
 [Experimental setup](/methodology/)
-
-[GitHub repository](https://github.com/OleksiiOleksenko/intel_mpx_explained)
 
 </div><!-- /.large-6.columns -->
 </div><!-- /.row 5 -->
