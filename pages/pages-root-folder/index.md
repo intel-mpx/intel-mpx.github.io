@@ -46,7 +46,7 @@ homepage: true
 
 * [Our ATC'17 submission "Intel MPX explained"]() _(not yet published)_
 * [Technical Report "Intel MPX Explained: An Empirical Study of Intel MPX and Software-based Bounds Checking Approaches"](https://arxiv.org/abs/1702.00719)
-[<img class="t0" width="25" src="http://localhost:4000/images/pdf-icon.png" alt="Technical Report">](https://arxiv.org/pdf/1702.00719v1.pdf)
+[<img class="t0" width="25" src="/images/pdf-icon.png" alt="Technical Report">](https://arxiv.org/pdf/1702.00719v1.pdf)
 
 ----
 
