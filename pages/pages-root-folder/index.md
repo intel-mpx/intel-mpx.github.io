@@ -30,7 +30,7 @@ homepage: true
 
 
 <div class="row">
-<div class="large-6 large-push-3 columns" markdown="0">
+<div class="large-8 large-push-2 columns" markdown="0">
     
     <h1 id="intel-mpx-explained" style="text-align:center; margin-bottom: 2pt;">Intel MPX Explained</h1>
     <div style="text-align:center; color: #333;">An empirical study of Intel MPX and software-based bounds checking approaches</div>
@@ -89,7 +89,7 @@ homepage: true
     <div style="text-align:center;">
         <a href="/performance/">
             <img class="t0" width="60%" src="/images/plot-icon.jpg" alt="Performance Evaluation">
-            <h4 style="text-align:center; margin: 0 0 0 0;">Performance</h4>
+            <h4 style="text-align:center; margin: 0 0 1em 0;">Performance</h4>
         </a>
     </div>
     
@@ -100,7 +100,7 @@ homepage: true
     <div style="text-align:center;">
         <a href="/security/">
             <img class="t0" width="60%" src="/images/security-icon.png" alt="Secutiry Evaluation">
-            <h4 style="text-align:center; margin: 0 0 0 0;">Security</h4>
+            <h4 style="text-align:center; margin: 0 0 1em 0;">Security</h4>
         </a>
     </div>
     
@@ -110,7 +110,7 @@ homepage: true
     <div style="text-align:center;">
         <a href="/usability/">
             <img class="t0" width="85%" src="/images/results_table.jpg" alt="Usability Evaluation">
-            <h4 style="text-align:center; margin: 0 0 0 0;">Usability</h4>
+            <h4 style="text-align:center; margin: 0 0 1em 0;">Usability</h4>
         </a>
     </div>
   
@@ -120,33 +120,27 @@ homepage: true
 <div class="row">
 <div class="medium-12 columns" markdown="1">
 
-<br/>
-
 ----
 
-<h2 style="text-align:center; margin-top: 0; margin-bottom: 1em; font-size: 1.8em;">Looking for more information?</h2>
-
+<h2 style="text-align:center; margin-top: 0; margin-bottom: 1em; font-size: 1.6em;">Looking for more information?</h2>
 
 </div><!-- /.medium-12.columns -->
 </div><!-- /.row 4 -->
 
 
 <div class="row">
-<div class="large-5 large-push-1 columns" markdown="1" style="padding-left: 0">
+<div class="large-6 large-push-1 columns" markdown="1">
     
-[Brief overview of our study](/overview)
-
-[Complete description of Intel MPX](/design/)
-
-[Isolated measurements of different aspects of Intel MPX](/microbenchmarks/) 
+* [Brief overview of our study](/overview)
+* [Complete description of Intel MPX](/design/)
+* [Isolated measurements of different aspects of Intel MPX](/microbenchmarks/) 
     
 </div><!-- /.large-6.columns -->
 
-<div class="large-5 large-pull-1 columns" markdown="1" style="text-align: right">
+<div class="large-5 columns" markdown="1">
     
-[Tests on real-world case studies](/case-studies/)
-
-[Experimental setup](/methodology/)
+* [Tests on real-world case studies](/case-studies/)
+* [Experimental setup](/methodology/)
 
 </div><!-- /.large-6.columns -->
 </div><!-- /.row 5 -->
