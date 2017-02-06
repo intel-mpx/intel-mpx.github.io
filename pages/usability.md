@@ -26,7 +26,12 @@ permalink: "/usability/"
 
 The below figure highlights the usability of MPX, i.e., the number of MPX-protected programs that fail to compile correctly and/or need significant code modifications. Note that many programs can be easily fixed; we do not count them as broken (see the refined table below for details). MPX security levels are based on our own classification and correspond to the stricter protection rules, where level 0 means unprotected native version and 6---the most secure MPX configuration. In total, our evaluation covers 38 programs from the Phoenix, PARSEC, and SPEC benchmark suites.
 
-<img class="t20" width="75%" src="{{ site.urlimg }}usability.jpg" alt="Number of MPX-broken programs">
+</div><!-- /.medium-8.columns -->
+<div class="medium-12 medium-pull-12 columns" markdown="1">
+
+<div style="text-align:center; margin-bottom: 1em;">
+<img class="t20" width="55%" src="{{ site.urlimg }}usability.jpg" alt="Number of MPX-broken programs">
+</div>
 
 As can be seen, around 10% of programs break already at the weakest level 1 of MPX protection (without narrowing of bounds and protecting only writes).
 At the highest security level 6 (with enabled `BNDPRESERVE`), most of the programs fail.

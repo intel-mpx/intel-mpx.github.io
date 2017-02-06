@@ -29,9 +29,6 @@ The following table shows the latency-throughput results of Intel MPX instructio
 For this evaluation, we extended the scripts used to build Agner Fog's instruction tables.[^agnerfog]
 Our scripts can be [downloaded here]({{ site.url }}{{ site.baseurl }}/code/asm_measurements.zip).
 
-In our extension, we wrote a loop with 1,000 copies of an instruction under test and run the loop 100 times. This gives us 100,000 executions in total. We run each experiment 10 times to make sure the results were not influenced by external factors.
-For each run, we initialize all BND registers with dummy values to avoid interrupts caused by failed bound checks.
-
 | Instruction              | &mu;ops<sup>2</sup> | Tput | Lat     |   | P0<sup>3</sup> | P1<sup>3</sup> | P2<sup>3</sup> | P3<sup>3</sup> | P4<sup>3</sup> | P5<sup>3</sup> | P6<sup>3</sup> | P7<sup>3</sup> |
 |:-------------------------|--------------------:|-----:|--------:|---|         ------:|         ------:|         ------:|         ------:|         ------:|         ------:|         ------:|         ------:|
 | `bndmk b, m`<sup>1</sup> | 2                   | 2    | 1       |   |          1     |          1     |                |                |                |          1     |          1     |                |
@@ -50,6 +47,12 @@ For each run, we initialize all BND registers with dummy values to avoid interru
 2 - &mu;ops is short for number of microoperations per instruction.<br/>
 3 - Denotes the number of microoperations executed on the port per each cycle. It can be interpreted as port usage.<br/>
 </sup>
+
+</div><!-- /.medium-8.columns -->
+<div class="medium-12 medium-pull-12 columns" markdown="1">
+
+In our extension, we wrote a loop with 1,000 copies of an instruction under test and run the loop 100 times. This gives us 100,000 executions in total. We run each experiment 10 times to make sure the results were not influenced by external factors.
+For each run, we initialize all BND registers with dummy values to avoid interrupts caused by failed bound checks.
 
 {% include alert text='**Note 1**: `bndcu` has a one’s complement version `bndcn`, we skip it for clarity.' %}
 
@@ -136,7 +139,9 @@ In this case, for `r` checks, IPC increases to three instructions per cycle: one
 For `m` checks, IPC becomes *less* than the original: two loads and four checks are scheduled in four cycles, thus IPC of 1.5.
 These scenarious are illustrated by the following figure:
 
-<img class="t20" width="95%" src="{{ site.urlimg }}mpx_checks.jpg" alt="Bottleneck of bounds checking">
+<div style="text-align:center; margin-bottom: 1em;">
+<img class="t20" width="80%" src="{{ site.urlimg }}mpx_checks.jpg" alt="Bottleneck of bounds checking">
+</div>
 
 The similar analysis applies for stores.
 However, the original IPC in this case is *one* store per cycle, which means that any variant of MPX checks *increases* IPC.
@@ -208,7 +213,9 @@ All microbenchmarks were compiled with `-O2` optimizations.
 
 Performance results:
 
-<img class="t20" width="95%" src="{{ site.urlimg }}micro_perf.jpg" alt="Performance overheads of microbenchmarks">
+<div style="text-align:center; margin-bottom: 1em;">
+<img class="t20" width="60%" src="{{ site.urlimg }}micro_perf.jpg" alt="Performance overheads of microbenchmarks">
+</div>
 
 **Observation 1**: `arraywrite` and `arrayread` represent the bare overhead of bounds-checking instructions (all in registers), 50% in this case. `struct` has a higher overhead of 2.1−2.8× due to the more expensive making and moving of bounds to and from the stack. 5× overhead of `ptrcreation` is due to storing of bounds -- the most expensive MPX operation.
 
@@ -218,7 +225,7 @@ There is a 25% difference between GCC and ICC in `arraywrite`. This is the effec
 **Observation 3**:
 The overhead of `arrayread` becomes negligible with the only-writes MPX version: the only memory accesses in this benchmark are reads which are left uninstrumented. The same logic applies to `struct` -- disabling narrowing of bounds effectively removes expensive `bndmk` and `bndmov` instructions and lowers performance overhead to a bare minimum.
 
-{% include alert text='Raw results can be found in the [repository](https://github.com/OleksiiOleksenko/mpx_evaluation/tree/master/raw_results/micro).' %}
+{% include alert text='Raw results can be found in the [repository](https://github.com/OleksiiOleksenko/intel_mpx_explained/tree/master/raw_results/micro).' %}
 
 
 <small markdown="1">[Up to table of contents](#toc)</small>

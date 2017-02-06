@@ -107,3 +107,10 @@ GCC implementation is less susceptible to them, but it comes at a cost of worse 
 We expect that most identified issues with Intel MPX will be fixed in future versions.
 Still, support for multithreading and restrictions on memory layout are inherent design limitations of MPX which would require sophisticated solutions, which would in turn negatively affect performance.
 We hope our work will help practitioners to better understand the benefits and caveats of Intel MPX, and researchers---to concentrate their efforts on those issues still waiting to be solved.
+
+
+[^temporal]: The current version of Intel MPX protects only against "spatial" errors and attacks (described above). There are also "temporal" errors that appear when trying to use an object before it was created or after it was deleted. MPX does not yet provide a protection against temporal errors.		
+[^pointervsobject]: In terms of created metadata, trip-wire approaches create "shadow memory" metadata for the whole available program memory, pointer-based approaches create bounds metadata per each pointer, and object-based approaches create bounds metadata per each object.		
+[^clang]: Interestingly, there seem to be no plans to port Intel MPX to Clang/LLVM; a discussion (started by us) can be found in the [LLVM mailing list](http://lists.llvm.org/pipermail/llvm-dev/2016-January/094620.html).		
+[^multi]: Surprisingly, Phoenix and PARSEC multithreaded programs experienced no MPX-related issues; we believe it was a matter of luck.		
+[^cets]: The SoftBound prototype we tested is based on the CETS+SoftBound version described in the paper ["CETS: Compiler-Enforced Temporal Safety for C" by Nagarakatte et al.](http://dl.acm.org/citation.cfm?id=1806657). CETS is the extension that adds protection against temporal errors.

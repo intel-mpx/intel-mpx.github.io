@@ -23,17 +23,6 @@ permalink: "/design/"
 <div class="medium-8 medium-pull-4 columns" markdown="1">
 
 Intel Memory Protection Extensions (Intel MPX) was first announced in 2013 and introduced as part of the Skylake microarchitecture in late 2015.
-This technology requires modifications at each level of the hardware-software stack:
-
-
-* At the _hardware level_, new instructions as well as a set of 128-bit registers are added. Also, the #BR exception thrown by these new instructions is introduced.
-* At the _OS level_, a new #BR handler is added that has two main functions: (1) allocating storage for bounds on-demand, and (2) sending a signal to the program whenever a bounds violation is detected.
-* At the _compiler level_, new MPX transformation passes are added to insert MPX instructions to create, propagate, store, and check bounds. Additional _runtime libraries_ provide initialization/finalization routines, statistics and debug info, and wrappers for functions from standard C library.
-* At the _application level_, the MPX-protected program may require manual changes due to troublesome C coding patterns, multithreading issues, or potential problems with other ISA extensions. (In some cases, it is inadvisable to use MPX at all.)
-
-</div><!-- /.medium-8.columns -->
-<div class="medium-12 medium-pull-12 columns" markdown="1">
-
 The sole purpose of Intel MPX is to transparently add bounds checking to legacy C/C++ programs.
 Consider the following code snippet:
 
@@ -49,8 +38,11 @@ Consider the following code snippet:
 8:     total += len                // Total length of all objs
 ```
 
-The program allocates an array `a[10]` with 10 pointers to some buffer objects of type `obj` (Line 2).
-Next, it iterates through the first `M` items of the array to calculate the sum of objects' length values (Lines 4-9).
+</div><!-- /.medium-8.columns -->
+<div class="medium-12 medium-pull-12 columns" markdown="1">
+
+The program allocates an array `a[10]` with 10 pointers to some buffer objects of type `obj` (Line 1).
+Next, it iterates through the first `M` items of the array to calculate the sum of objects' length values (Lines 3-8).
 In C, this loop would look like this:
 
 ```c
@@ -59,7 +51,7 @@ for (i=0; i<M; i++) {
 }
 ```
 
-Note how the array item access `a[i]` decays into a pointer `ai` on Line 5, and how the subfield access decays to `lenptr` on Line 7.
+Note how the array item access `a[i]` decays into a pointer `ai` on Line 4, and how the subfield access decays to `lenptr` on Line 6.
 
 When Intel MPX protection is applied, the code transforms into the following:
 
@@ -90,6 +82,14 @@ Where does it get these bounds from?
 In MPX, every pointer stored in memory has its associated bounds also stored in a special memory region accessed via `bndstx` and `bndldx` MPX instructions (see next subsection for details).
 Thus, when the `objptr` pointer is retrieved from memory address `ai`, its corresponding bounds are retrieved using `bndldx` from the same address (Line 9).
 Finally, the two bounds checks are inserted before the load of the length value on Lines 11-12.
+
+This technology requires modifications at each level of the hardware-software stack:
+
+* At the _hardware level_, new instructions as well as a set of 128-bit registers are added. Also, the #BR exception thrown by these new instructions is introduced.
+* At the _OS level_, a new #BR handler is added that has two main functions: (1) allocating storage for bounds on-demand, and (2) sending a signal to the program whenever a bounds violation is detected.
+* At the _compiler level_, new MPX transformation passes are added to insert MPX instructions to create, propagate, store, and check bounds. Additional _runtime libraries_ provide initialization/finalization routines, statistics and debug info, and wrappers for functions from standard C library.
+* At the _application level_, the MPX-protected program may require manual changes due to troublesome C coding patterns, multithreading issues, or potential problems with other ISA extensions. (In some cases, it is inadvisable to use MPX at all.)
+
 
 In the following, we detail how Intel MPX support is implemented at each level of the hardware-software stack.
 
@@ -143,7 +143,9 @@ In some cases, it may lead to extreme performance degradation caused by cache th
 The address translation itself is a multistage process.
 Consider loading of pointer bounds:
 
+<div style="text-align:center; margin-bottom: 1em;">
 <img class="t20" width="40%" src="{{ site.urlimg }}bound-address-translation.jpg" alt="Bound address translation">
+</div>
 
 In the first stage, the corresponding BD entry has to be loaded.
 For that, the CPU: (1) extracts the offset of BD entry from bits 20--47 of the pointer address and shifts it by 3 bits (since all BD entries are 2<sup>3</sup> bits long), (2) loads the base address of BD from the `BNDCFGx` (in particular, `BNDCFGU` in user space and `BNDCFGS` in kernel mode) register, and (3) sums the base and the offset and loads the BD entry from the resulting address.
@@ -155,9 +157,17 @@ This is required for interoperability with legacy code and only happens when som
 This operation is expensive---it requires approximately 3 register-to-register moves, 3 shifts, and 2 memory loads.
 On top of it, since these memory accesses are non-contiguous, the protected application will have worse cache locality.
 
+### Interaction with other ISA extensions {#isa}
+
+Intel MPX can cause issues when used together with other ISA extensions, e.g., Intel TSX and Intel SGX.
+Intel MPX may cause transactional aborts in some corner cases when used inside an Intel TSX hardware transaction (see [documentation](https://software.intel.com/en-us/articles/intel-sdm) for the details).
+Also, since Bounds Tables and #BR exceptions are managed by the OS, Intel MPX cannot be used as-is in an Intel SGX enclave environment.
+Indeed, the malicious OS could tamper with these structures and subvert correct MPX execution.
+To prevent such scenarios, Intel MPX allows to move this functionality into the SGX enclave and verify every OS action.
+Finally, we are not aware of any side-channel attacks that could utilize Intel MPX inside the enclave.
+
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }
-
 
 ## Operating System
 
@@ -175,7 +185,9 @@ Two levels of bounds address translation are managed differently: BDs are alloca
 The later is a task of OS.
 The procedure is presented in the next figure.
 
+<div style="text-align:center; margin-bottom: 1em;">
 <img class="t20" width="40%" src="{{ site.urlimg }}BT-allocation.jpg" alt="Bounds Table allocation">
+</div>
 
 Each time an application tries to store pointer bounds (1), the CPU loads the corresponding entry from the BD and checks if it contains a valid entry (2).
 If the check fails, the CPU raises #BR and traps into the kernel (3).
@@ -242,7 +254,7 @@ There are two common optimizations used by GCC and ICC.
 2. Moving (hoisting) bounds-checks out of simple loops.
 
 Consider our example.
-If it is known that `M<=10`, then optimization (1) can remove always-true checks on Lines 7-8.
+If it is known that `M<=10`, then optimization (1) can remove always-true checks on Lines 6-7.
 Otherwise, optimization (2) can kick in and move these checks before the loop body, saving two instructions on each iteration.
 
 Interestingly, current implementations of GCC and ICC take different stances when it comes to optimizing MPX code.

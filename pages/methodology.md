@@ -44,6 +44,9 @@ For experiments on [case studies](/case-studies), we used two machines with the 
 * GLibC: 2.21
 * Binutils: 2.26.1
 
+</div><!-- /.medium-8.columns -->
+<div class="medium-12 medium-pull-12 columns" markdown="1">
+
 #### Compilers
 
 * GCC:
