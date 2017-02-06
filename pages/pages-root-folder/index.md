@@ -40,7 +40,7 @@ homepage: true
 </div><!-- /.row 1 -->
 
 
-<!--<div class="row">
+<div class="row" style="margin: 0 0 0 0;">
   
     <div class="large-2 large-push-3 columns" markdown="0" style="text-align:center;">
         <a href="https://arxiv.org/pdf/1702.00719v1.pdf">
@@ -50,7 +50,7 @@ homepage: true
     </div>
     
     <div class="large-2 large-push-3 columns" markdown="0" style="text-align:center;">
-        <a href="https://arxiv.org/pdf/1702.00719v1.pdf">
+        <a href="/code/tech_rep.bib">
             <img class="t0" width="20%" src="/images/bibtex.jpg" alt="BibTex">
             <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">BibTex</div>
         </a>
@@ -63,19 +63,18 @@ homepage: true
         </a>
     </div>
 
-</div>-->
+</div>
 
 
 <div class="row">
 <div class="medium-12 columns" markdown="1">
-
-#### Corresponding publications:
+<!--#### Corresponding publications:-->
 
 <!--* [Our ATC'17 submission "Intel MPX explained"]() _(not yet published)_-->
-* [Technical Report "Intel MPX Explained: An Empirical Study of Intel MPX and Software-based Bounds Checking Approaches"](https://arxiv.org/abs/1702.00719)
-<a href="https://arxiv.org/pdf/1702.00719v1.pdf"><img class="t0" width="3%" src="/images/pdf-icon.png" alt="Technical Report"></a>
-<a href="/code/tech_rep.bib"><img class="t0" width="3%" src="/images/bibtex.jpg" alt="BibTex"></a>
-<a href="https://github.com/OleksiiOleksenko/intel_mpx_explained"><img class="t0" width="3%" src="/images/github.png" alt="Source Code"></a>
+<!--* [Technical Report "Intel MPX Explained: An Empirical Study of Intel MPX and Software-based Bounds Checking Approaches"](https://arxiv.org/abs/1702.00719)-->
+<!--<a href="https://arxiv.org/pdf/1702.00719v1.pdf"><img class="t0" width="3%" src="/images/pdf-icon.png" alt="Technical Report"></a>-->
+<!--<a href="/code/tech_rep.bib"><img class="t0" width="3%" src="/images/bibtex.jpg" alt="BibTex"></a>-->
+<!--<a href="https://github.com/OleksiiOleksenko/intel_mpx_explained"><img class="t0" width="3%" src="/images/github.png" alt="Source Code"></a>-->
 
 ----
 
