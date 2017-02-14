@@ -81,7 +81,7 @@ If this functionality would be available on more ports, MPX would be able to use
 **Lesson 2: The supporting infrastructure is not mature enough.**
 MPX support is available for GCC and ICC compilers.[^clang]
 At the compiler level, GCC-MPX has [severe performance issues](/performance) (150% overhead on average) whereas ICC-MPX has [a number of compiler bugs](/usability) (such that 10% of programs broke in our evaluation).
-At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus not detecting bugs such as the [Nginx bug](case-studies/#security-1).
+At the runtime-support level, both GCC and ICC provide only a small subset of function wrappers for the C standard library, thus not detecting bugs such as the [Nginx bug](/case-studies/#security-1).
 
 **Lesson 3: MPX provides no temporal protection.**
 Current design of MPX protects only against spatial (out-of-bounds accesses) but not temporal (dangling pointers) errors.
@@ -90,7 +90,7 @@ We believe MPX can be enhanced for temporal safety without harming performance, 
 
 **Lesson 4: MPX does not support multithreading.**
 Current incarnation of MPX has no support for multithreaded programs.[^multi]
-[Our microbenchmarks](microbenchmarks/#multithreading) show that an MPX-protected multithreaded program can have both false positives (false alarms) and false negatives (missed bugs and undetected attacks).
+[Our microbenchmarks](/microbenchmarks/#multithreading) show that an MPX-protected multithreaded program can have both false positives (false alarms) and false negatives (missed bugs and undetected attacks).
 Until this issue is fixed---either at the software or at the hardware level---MPX cannot be considered safe in multithreaded environments.
 Unfortunately, we do not see a simple fix to this problem that would *not* affect performance adversely.
 
