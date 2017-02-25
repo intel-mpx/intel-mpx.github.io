@@ -71,7 +71,7 @@ homepage: true
 
 <h3 style="text-align:center; margin-top: 0; margin-bottom: 1em; font-size: 1.8em;">What is Intel MPX?</h3>
 
-In August 2015, Intel Memory Protection Extensions (Intel MPX) became available as part of the Skylake microarchitecture. The goal of MPX was to provide an efficient protection against memory errors and attacks. Here, by memory errors we understand errors that happen when a program reads from or writes to a different memory region than the one intended by the developer, e.g., buffer overflows and out-of-bounds accesses. A memory attack is a different view on the same problem—a scenario in which an adversary gains access to the region of memory not allowed for use.
+In August 2015, Intel Memory Protection Extensions (Intel MPX) became available as part of the Skylake microarchitecture. The goal of MPX is to provide an efficient protection against memory errors and attacks. Here, by memory errors we understand errors that happen when a program reads from or writes to a different memory region than the one intended by the developer, e.g., buffer overflows and out-of-bounds accesses. A memory attack is a different view on the same problem—a scenario in which an adversary gains access to the region of memory not allowed for use.
 
 This website presents results of our Intel MPX evaluation.
 </div>
