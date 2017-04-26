@@ -93,7 +93,7 @@ This technology requires modifications at each level of the hardware-software st
 
 In the following, we detail how Intel MPX support is implemented at each level of the hardware-software stack.
 
-## Hardware
+## Hardware {#hw}
 
 {% include alert text='The corresponding microbenchmark with latencies and throughputs of individual MPX instructions is found in [Microbenchmarks](/microbenchmarks#mpxinstr).' %}
 

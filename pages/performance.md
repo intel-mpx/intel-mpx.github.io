@@ -279,6 +279,19 @@ Consequently, these two versions have opposite dynamics.
 It is caused by the *quarantine zone* which may take a lot of space when memory regions are constantly allocated and freed.
 To prove it, we repeated the experiment with a quarantine zone of a small size (1MB): the dynamics became similar to other benchmarks, i.e., the overhead was steadily decreasing.
 
+## Performance on older CPU architectures
+
+As we mention in the [Hardware description](/design/#hw), MPX-protected applications can be executed even on older Intel CPUs that do not support Intel MPX.
+In this case, MPX instructions will be executed as NOPs and consequently, no protection will be provided.
+Yet, NOPs are not free - each one takes 1 cycle to execute, they take space in caches, in the instruction pipeline, etc.
+It means that in such a scenario the application will be slowed down but will not get any additional security guaranties.
+To evaluate this effect, we run the same set of benchmarks on a Haswell machine.
+The results are presented in the following figures:
+
+<img class="t20" width="100%" src="{{ site.urlimg }}phoenix_perf_haswell.jpg" alt="Performance overheads of Phoenix on a Haswell machine">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_perf_haswell.jpg"  alt="Performance overheads of PARSEC on a Haswell machine">
+<img class="t20" width="100%" src="{{ site.urlimg }}spec_perf_haswell.jpg"    alt="Performance overheads of SPEC on a Haswell machine">
+
 ## Other statistics
 
 This data was removed from the main paper since it does not add more information to the existing discussion.
