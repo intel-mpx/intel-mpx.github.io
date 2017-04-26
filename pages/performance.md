@@ -314,8 +314,15 @@ E.g., the correlation between the percentage of memory accesses, the number of i
 
 ### Branches and TLB
 
-We found these results uninteresting but report them here for completeness.
-
 <img class="t20" width="100%" src="{{ site.urlimg }}phoenix_misc_stat.jpg" alt="Branches and TLB (Phoenix)">
 <img class="t20" width="100%" src="{{ site.urlimg }}parsec_misc_stat.jpg"  alt="Branches and TLB (PARSEC)">
 <img class="t20" width="100%" src="{{ site.urlimg }}spec_misc_stat.jpg"    alt="Branches and TLB (SPEC)">
+
+### Intel Pointer Checker
+
+Before MPX, Intel had a software implementation of bounds checking in their compiler called Pointer Checker.
+The following figures compare performance of this feature with MPX - the improvement is unquestionable.
+
+<img class="t20" width="100%" src="{{ site.urlimg }}phoenix_ptr_perf.jpg" alt="Runtime overhead of Pointer Checker (Phoenix)">
+<img class="t20" width="100%" src="{{ site.urlimg }}parsec_ptr_perf.jpg"  alt="Runtime overhead of Pointer Checker (PARSEC)">
+<img class="t20" width="100%" src="{{ site.urlimg }}spec_ptr_perf.jpg"    alt="Runtime overhead of Pointer Checker (SPEC)">
