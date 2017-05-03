@@ -1,5 +1,6 @@
 - name: GitHub
-  url: https://github.com/OleksiiOleksenko/intel_mpx_explained
+#  url: https://github.com/OleksiiOleksenko/intel_mpx_explained
+  url: https://github.com/hidden
   class: icon-github
   title: Code for Intel MPX Explained
 
