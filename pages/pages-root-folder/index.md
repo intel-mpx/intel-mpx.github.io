@@ -33,7 +33,7 @@ homepage: true
 <div class="large-8 large-push-2 columns" markdown="0">
     
     <h1 id="intel-mpx-explained" style="text-align:center; margin-bottom: 2pt;">Intel MPX Explained</h1>
-    <div style="text-align:center; color: #333;">An empirical study of Intel MPX and software-based bounds checking approaches</div>
+    <div style="text-align:center; color: #333;">A cross-layer dissection of the MPX system stack and comparison with software-based memory safety systems</div>
     <br/>
 
 </div><!-- /.large-6.columns -->
