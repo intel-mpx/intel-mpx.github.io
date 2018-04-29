@@ -39,7 +39,6 @@ homepage: true
 </div><!-- /.large-6.columns -->
 </div><!-- /.row 1 -->
 
-<!--
 <div class="row" style="margin: 0 0 0 0;">
   
     <div class="large-2 large-push-3 columns" markdown="0" style="text-align:center;">
@@ -64,7 +63,6 @@ homepage: true
     </div>
 
 </div>
--->
 
 <div class="row">
 <div class="medium-12 columns" markdown="1">
