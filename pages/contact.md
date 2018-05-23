@@ -16,7 +16,7 @@ For more information, questions, and comments, please contact one of the authors
 For the sources, please visit [our GitHub page][6].
 
 [1]: https://tu-dresden.de/ing/informatik/sya/se/die-professur/beschaeftigte/oleksii-oleksenko
-[2]: https://tu-dresden.de/ing/informatik/sya/se/die-professur/beschaeftigte/dmitrii-kuvaiskii
+[2]: https://dimakuv.github.io/
 [3]: http://homepages.inf.ed.ac.uk/pbhatoti/
 [4]: http://members.unine.ch/pascal.felber/index.html
 [5]: https://tu-dresden.de/ing/informatik/sya/se/die-professur/inhaber-in
