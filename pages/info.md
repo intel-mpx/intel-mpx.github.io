@@ -8,7 +8,6 @@ header: no
 permalink: "/info/"
 ---
 
-<!--
 For more information, questions, and comments, please contact one of the authors:
 
 * [Oleksii Oleksenko][1]
@@ -18,9 +17,6 @@ For more information, questions, and comments, please contact one of the authors
 * [Christof Fetzer][5]
 
 For the sources, please visit [our GitHub page][6].
--->
-
-The contact information is hidden while the paper is under submission.
 
 [1]: https://tu-dresden.de/ing/informatik/sya/se/die-professur/beschaeftigte/oleksii-oleksenko
 [2]: https://tu-dresden.de/ing/informatik/sya/se/die-professur/beschaeftigte/dmitrii-kuvaiskii

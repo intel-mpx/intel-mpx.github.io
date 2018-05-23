@@ -34,6 +34,6 @@
   url: "/case-studies/"
   side: left
 
-#- title: "Contact"
-#  url: "/contact/"
-#  side: right
+- title: "Contact"
+  url: "/contact/"
+  side: right
