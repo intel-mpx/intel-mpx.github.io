@@ -88,9 +88,9 @@ Current design of MPX protects only against spatial (out-of-bounds accesses) but
 All other tested approaches---AddressSanitizer, SoftBound, and SAFECode---guarantee some form of temporal safety.
 We believe MPX can be enhanced for temporal safety without harming performance, similar to SoftBound.
 
-**Lesson 4: MPX does not support multithreading.**
-Current incarnation of MPX has no support for multithreaded programs.[^multi]
-[Our microbenchmarks](/microbenchmarks/#multithreading) show that an MPX-protected multithreaded program can have both false positives (false alarms) and false negatives (missed bugs and undetected attacks).
+**Lesson 4: MPX does not support multithreading transparently**
+Current incarnation of MPX has no transparent support for multithreaded programs.[^multi]
+[Our microbenchmarks](/microbenchmarks/#multithreading) show that an MPX-protected multithreaded program can have both false positives (false alarms) and false negatives (missed bugs and undetected attacks) if the application does not conform to C11 memory model or if the compiler does not update bounds in atomic primitives.
 Until this issue is fixed---either at the software or at the hardware level---MPX cannot be considered safe in multithreaded environments.
 Unfortunately, we do not see a simple fix to this problem that would *not* affect performance adversely.
 

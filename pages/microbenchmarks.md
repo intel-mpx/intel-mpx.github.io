@@ -260,6 +260,13 @@ The test cases are compiled and run as follows:
 
 {% include alert text='**Note**: Make sure the test cases run on two cores!' %}
 
+We must note that the test cases do not conform to the memory model introduced in C11 and C++11 standards.
+Under C11, this code by itself has undefined behavior, and the compilers are free to produce a potentially misbehaving program.
+Thus, the discussion above applies only to legacy C/C++ code where the data race is technically allowed.
+Under the new C11 thread model, `arr` must be declared as an array of `atomic` pointers.
+Ideally, the compiler would recognize loads/stores of atomic pointers and enclose them and their corresponding bounds loads/stores in a critical section.
+Unfortunately, our investigation proved that current compilers do not generate correct code neither with GCC-specific `__atomic_store()` nor with C11-defined `_Atomic` types.
+
 
 <small markdown="1">[Up to table of contents](#toc)</small>
 {: .text-right }

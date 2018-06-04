@@ -298,8 +298,6 @@ For example, `memcpy` must be implemented so that it copies not only the content
 
 ## Application
 
-{% include alert text='In its current state, Intel MPX does not support multithreading. The microbenchmark that highlights this issue is found in [Microbenchmarks](/microbenchmarks#multithreading).' %}
-
 
 ### Not supported C idioms
 
