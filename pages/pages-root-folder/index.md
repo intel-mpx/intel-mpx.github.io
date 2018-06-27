@@ -41,26 +41,34 @@ homepage: true
 
 <div class="row" style="margin: 0 0 0 0;">
   
-    <div class="large-2 large-push-3 columns" markdown="0" style="text-align:center;">
+    <div class="large-3 columns" markdown="0" style="text-align:center;">
+        <a href="/code/sigmetrics.bib">
+            <img class="t0" width="20%" src="/images/bibtex.jpg" alt="BibTex">
+            <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">BibTex<br/>POMACS publication</div>
+        </a>
+    </div>
+  
+    <div class="large-3 columns" markdown="0" style="text-align:center;">
+        <a href="https://github.com/OleksiiOleksenko/intel_mpx_explained">
+            <img class="t0" width="20%" src="/images/github.png" alt="Source Code">
+            <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">Source Code</div>
+        </a>
+    </div>
+  
+    <div class="large-3 columns" markdown="0" style="text-align:center;">
         <a href="https://arxiv.org/pdf/1702.00719v1.pdf">
             <img class="t0" width="20%" src="/images/pdf-icon.png" alt="Technical Report">
             <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">Technical Report</div>
         </a>
     </div>
     
-    <div class="large-2 large-push-3 columns" markdown="0" style="text-align:center;">
+    <div class="large-3 columns" markdown="0" style="text-align:center;">
         <a href="/code/tech_rep.bib">
             <img class="t0" width="20%" src="/images/bibtex.jpg" alt="BibTex">
-            <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">BibTex</div>
+            <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">BibTex<br/>Technical Report</div>
         </a>
     </div>
-    
-    <div class="large-2 large-pull-3 columns" markdown="0" style="text-align:center;">
-        <a href="https://github.com/OleksiiOleksenko/intel_mpx_explained">
-            <img class="t0" width="20%" src="/images/github.png" alt="Source Code">
-            <div style="text-align:center; margin: 0 0 0 0; font-size: 0.8em;">Source Code</div>
-        </a>
-    </div>
+   
 
 </div>
 
