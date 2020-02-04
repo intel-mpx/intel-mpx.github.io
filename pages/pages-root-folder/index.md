@@ -89,6 +89,8 @@ homepage: true
 In August 2015, Intel Memory Protection Extensions (Intel MPX) became available as part of the Skylake microarchitecture. The goal of MPX is to provide an efficient protection against memory errors and attacks. Here, by memory errors we understand errors that happen when a program reads from or writes to a different memory region than the one intended by the developer, e.g., buffer overflows and out-of-bounds accesses. A memory attack is a different view on the same problem—a scenario in which an adversary gains access to the region of memory not allowed for use.
 
 This website presents results of our Intel MPX evaluation.
+
+UPDATE: At this point, Intel MPX support is officially discontinued by GCC ([Patch](https://gcc.gnu.org/ml/gcc-patches/2018-04/msg01225.html)) and Linux ([Patch](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ccaaaf6fe5a5e1fffca5cca0f3fc4ec84d7ae752)). The technology won't be available on the future Intel processors too ([Announcement](https://software.intel.com/en-us/blogs/2013/07/22/intel-memory-protection-extensions-intel-mpx-support-in-the-gnu-toolchain)).
 </div>
 </div>
 
